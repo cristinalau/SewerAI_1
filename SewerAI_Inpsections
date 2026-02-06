@@ -1,0 +1,489 @@
+/* Combined: LACP + PACP + MACP
+   - No table changes, query-only
+   - Output columns are from your 3 queries (some NULL by type)
+*/
+
+WITH
+/* -------------------- CLOB-safe HTML cleaner (no ampersand literals) -------------------- */
+clean_longdesc AS (
+  SELECT
+    a.workordertaskoi,
+
+    /* Step 1: Un-double-escape common entities (e.g., &amp;lt; -> &lt;), keep as CLOB */
+    REPLACE(
+      REPLACE(
+        REPLACE(
+          REPLACE(
+            REPLACE(
+              REPLACE(TO_CLOB(a.longdescript),
+                CHR(38)||'amp;lt;',   CHR(38)||'lt;'
+              ),
+              CHR(38)||'amp;gt;',     CHR(38)||'gt;'
+            ),
+            CHR(38)||'amp;nbsp;',     CHR(38)||'nbsp;'
+          ),
+          CHR(38)||'amp;quot;',       CHR(38)||'quot;'
+        ),
+        CHR(38)||'amp;#39;',          CHR(38)||'#39;'
+      ),
+      CHR(38)||'amp;amp;',            CHR(38)||'amp;'
+    ) AS step1_unDoubleEscaped
+  FROM mnt.workordertask a
+),
+clean_longdesc_final AS (
+  SELECT
+    workordertaskoi,
+    REPLACE(
+      REGEXP_REPLACE(
+        REGEXP_REPLACE(
+          REGEXP_REPLACE(
+            REGEXP_REPLACE(
+              REGEXP_REPLACE(
+                REGEXP_REPLACE(
+                  REGEXP_REPLACE(
+                    REPLACE(
+                      REPLACE(
+                        REPLACE(
+                          REPLACE(
+                            REPLACE(step1_unDoubleEscaped,
+                              CHR(38)||'nbsp;', ' '
+                            ),
+                            CHR(38)||'lt;', '<'
+                          ),
+                          CHR(38)||'gt;', '>'
+                        ),
+                        CHR(38)||'quot;', '"'
+                      ),
+                      CHR(38)||'#39;', ''''
+                    ),
+                    '<!DOCTYPE[^>]*>', '', 1, 0, 'in'
+                  ),
+                  '<head[^>]*>.*?</head>', '', 1, 0, 'in'
+                ),
+                '<style[^>]*>.*?</style>', '', 1, 0, 'in'
+              ),
+              '<script[^>]*>.*?</script>', '', 1, 0, 'in'
+            ),
+            '<[^>]+>', '', 1, 0, 'n'
+          ),
+          '\s+', ' '
+        ),
+        '^\s+|\s+$', ''
+      ),
+      CHR(38)||'amp;', CHR(38)
+    ) AS additional_information_clob
+  FROM clean_longdesc
+),
+
+/* ---------------- MH_USE mapping ---------------- */
+mh_use_map AS (
+  SELECT 'COMBINED'         AS ivara_mh_use, 'C'  AS pioneers_code FROM DUAL UNION ALL
+  SELECT 'FOUNDATION DRAIN' AS ivara_mh_use, 'ST' AS pioneers_code FROM DUAL UNION ALL
+  SELECT 'NOT APPLICABLE'   AS ivara_mh_use, 'O'  AS pioneers_code FROM DUAL UNION ALL
+  SELECT 'SANITARY'         AS ivara_mh_use, 'S'  AS pioneers_code FROM DUAL UNION ALL
+  SELECT 'STORM'            AS ivara_mh_use, 'ST' AS pioneers_code FROM DUAL
+),
+
+/* ------------------------------ Combined base dataset ------------------------------ */
+base AS (
+  SELECT
+    wo.wonumber || '.' || a.tasknumber AS work_orders_number,
+    a.wotasktitle                       AS work_order_task_title,
+    s.assetnumber                       AS asset_number,
+
+    cli.additional_information_clob     AS additional_information,
+
+    e1.epdrdrainagefacilityoi           AS facilityoi,
+    e1.facilityid                       AS facility_id,
+    e1.facilitytype                     AS facility_type,
+    e.epdrfacility_oi,
+    e.epdrfacilityworkhistoryoi,
+    e.createdate_dttm,
+    e.lastupdate_dttm,
+
+    /* unknown subtype */
+    ep2.unknfacType                     AS unknown_type,
+
+    /* UUIDs */
+    a.uuid                              AS work_order_task_uuid,
+    e.uuid                              AS dr_uuid,
+
+    /* ---------------- LACP source ---------------- */
+    esc.pipelength                      AS lacp_pipelength,
+    esc.pipesize                        AS lacp_pipesize,
+    esc.recordtype                      AS lacp_recordtype,
+    esc.location                        AS lacp_location,
+    esc.neighbourhd                     AS lacp_neighbourhd,
+    esc.pipetype                        AS lacp_pipetype,
+    esc.wass_appid                      AS lacp_wass_appid,
+
+    /* ---------------- PACP source ---------------- */
+    ep1.material                        AS raw_material,
+    ep1.shape                           AS raw_shape,
+    ep1.wwtype                          AS raw_wwtype,
+    ep1.pipeid                          AS raw_pipeid,
+    ep1.usfacilityid                    AS upstream_id,
+    ep1.dsfacilityid                    AS downstream_id,
+    ep1.diameter_fl                     AS raw_diameter_fl,
+    ep1.usgroundelev_fl                 AS raw_usgroundelev_fl,
+    ep1.usinvertelev_fl                 AS raw_usinvertelev_fl,
+    ep1.dsgroundelev_fl                 AS raw_dsgroundelev_fl,
+    ep1.dsinvertelev_fl                 AS raw_dsinvertelev_fl,
+    ep1.location                        AS raw_location,
+    ep1.length_fl                       AS raw_length_fl,
+    ep1.yearconst                       AS raw_yearconst,
+    ep1.usneighbour                     AS raw_usneighbour,
+
+    /* ---------------- MACP sources ---------------- */
+    mh.wwtype                           AS mh_wwtype,
+    mh.neighbourhd                      AS mh_neighbourhd,
+    mh.location                         AS mh_location,
+    mh.cone                             AS mh_cone,
+    mh.bench                            AS mh_bench,
+    mh.channel                          AS mh_channel,
+    mh.shape                            AS mh_shape,
+    mh.diameter_fl                      AS mh_diameter_fl,
+    mh.depth_fl                         AS mh_depth_fl,
+    mh.groundelevat_fl                  AS mh_groundelevat_fl,
+
+    cb.wwtype                           AS cb_wwtype,
+    cb.neighbourhd                      AS cb_neighbourhd,
+    cb.location                         AS cb_location,
+    cb.shape                            AS cb_shape,
+    cb.diameter_fl                      AS cb_diameter_fl,
+    cb.depth_fl                         AS cb_depth_fl,
+    cb.framecover                       AS cb_framecover
+
+  FROM mnt.workordertask a
+  LEFT JOIN mnt.workorders wo ON a.workorder_oi = wo.workordersoi
+  LEFT JOIN mnt.asset s       ON a.asset_oi     = s.assetoi
+
+  JOIN customerdata.epdrfacworkhistory e
+    ON e.wotask_oi = a.workordertaskoi
+
+  LEFT JOIN customerdata.epdrdrainfacility e1
+    ON e.epdrfacility_oi = e1.epdrdrainagefacilityoi
+
+  LEFT JOIN customerdata.epdrunknfac ep2
+    ON e1.epdrunknownf_oi = ep2.epdrunknownfacilityoi
+
+  /* LACP */
+  LEFT JOIN customerdata."EPDRSERVICECONNECT" esc
+    ON esc.wass_appid = e1.facilityid
+
+  /* PACP */
+  LEFT JOIN customerdata.epdrpipe ep1
+    ON e1.epdrpipe_oi = ep1.epdrpipeoi
+
+  /* MACP */
+  LEFT JOIN customerdata.epdrmanhole mh
+    ON mh.manholeid = e1.facilityid
+  LEFT JOIN customerdata.epdrcatchbasin cb
+    ON cb.catchbasinid = e1.facilityid
+
+  LEFT JOIN clean_longdesc_final cli
+    ON cli.workordertaskoi = a.workordertaskoi
+
+  /* Keep only rows that belong to any of the 3 families */
+  WHERE
+       /* LACP: service conn OR unknown LACP */
+       e1.facilitytype = 4
+    OR (e1.facilitytype = 10 AND ep2.unknfacType IN (6,7))
+
+    OR /* PACP: pipe OR unknown pipe-like */
+       e1.facilitytype = 8
+    OR (e1.facilitytype = 10 AND ep2.unknfacType IN (4,5,6,7,8))
+
+    OR /* MACP: MH/CB OR unknown MH/CB */
+       e1.facilitytype IN (1,2)
+    OR (e1.facilitytype = 10 AND ep2.unknfacType IN (2,3))
+),
+
+/* Lookups */
+mhuse_lkp AS (
+  SELECT UPPER(TRIM(ivara_mh_use)) AS ivara_mh_use, pioneers_code
+  FROM mh_use_map
+)
+
+SELECT
+  b.work_orders_number,
+  b.work_order_task_title,
+  b.asset_number,
+  b.additional_information,
+
+  b.facilityoi,
+  b.facility_id,
+  b.facility_type,
+  b.epdrfacility_oi,
+  b.epdrfacilityworkhistoryoi,
+  b.createdate_dttm,
+  b.lastupdate_dttm,
+
+  /* inspection_type */
+  CASE
+    WHEN b.facility_type = 4 OR (b.facility_type = 10 AND b.unknown_type IN (6,7)) THEN 'LACP'
+    WHEN b.facility_type = 8 OR (b.facility_type = 10 AND b.unknown_type IN (4,5,6,7,8)) THEN 'PACP'
+    WHEN b.facility_type IN (1,2) OR (b.facility_type = 10 AND b.unknown_type IN (2,3)) THEN 'MACP'
+    ELSE NULL
+  END AS inspection_type,
+
+  /* material (LACP/PACP), MACP materials live in wall/bench/channel below */
+  COALESCE(
+    /* LACP */
+    CASE
+      WHEN (b.facility_type = 4 OR (b.facility_type = 10 AND b.unknown_type IN (6,7)))
+        THEN mc_sc.pioneers_code
+      ELSE NULL
+    END,
+    /* PACP */
+    CASE
+      WHEN (b.facility_type = 8 OR (b.facility_type = 10 AND b.unknown_type IN (4,5,6,7,8)))
+        THEN mc_pipe.pioneers_code
+      ELSE NULL
+    END,
+    /* fallback */
+    CASE
+      WHEN (b.facility_type = 4 OR (b.facility_type = 10 AND b.unknown_type IN (6,7))) THEN b.lacp_pipetype
+      WHEN (b.facility_type = 8 OR (b.facility_type = 10 AND b.unknown_type IN (4,5,6,7,8))) THEN b.raw_material
+      ELSE NULL
+    END
+  ) AS material,
+
+  /* shape (PACP only) */
+  CASE
+    WHEN (b.facility_type = 8 OR (b.facility_type = 10 AND b.unknown_type IN (4,5,6,7,8)))
+      THEN sc_pipe.pioneers_code
+    ELSE NULL
+  END AS shape,
+
+  /* pip_type:
+     - LACP/PACP used pip_type
+     - MACP used ACCESS_TYPE, but we keep the same output column name "pip_type"
+  */
+  CASE
+    WHEN (b.facility_type = 4 OR (b.facility_type = 10 AND b.unknown_type IN (6,7))) THEN 'Service Connection'
+    WHEN (b.facility_type = 8 OR (b.facility_type = 10 AND b.unknown_type IN (4,5,6,7,8))) THEN 'Pipe'
+    WHEN (b.facility_type = 1 OR (b.facility_type = 10 AND b.unknown_type = 3)) THEN 'Manhole'
+    WHEN (b.facility_type = 2 OR (b.facility_type = 10 AND b.unknown_type = 2)) THEN 'Catch Basin'
+    ELSE 'Unknown Facility'
+  END AS pip_type,
+
+  /* pipe_use (LACP from recordtype, PACP from wwtype) */
+  CASE
+    WHEN (b.facility_type = 4 OR (b.facility_type = 10 AND b.unknown_type IN (6,7))) THEN
+      CASE
+        WHEN UPPER(TRIM(b.lacp_recordtype)) = 'FOUNDATION' THEN 'PN'
+        WHEN UPPER(TRIM(b.lacp_recordtype)) = 'SANITARY'   THEN 'SS'
+        WHEN UPPER(TRIM(b.lacp_recordtype)) = 'STORM'      THEN 'SW'
+        WHEN UPPER(TRIM(b.lacp_recordtype)) = 'WATER'      THEN 'XX'
+        WHEN UPPER(TRIM(b.lacp_recordtype)) IN ('NOT APPLICABLE','N/A','NA') THEN 'XX'
+        ELSE NULL
+      END
+    WHEN (b.facility_type = 8 OR (b.facility_type = 10 AND b.unknown_type IN (4,5,6,7,8))) THEN
+      CASE
+        WHEN UPPER(TRIM(b.raw_wwtype)) = 'FOUNDATION' THEN 'PN'
+        WHEN UPPER(TRIM(b.raw_wwtype)) = 'SANITARY'   THEN 'SS'
+        WHEN UPPER(TRIM(b.raw_wwtype)) = 'STORM'      THEN 'SW'
+        WHEN UPPER(TRIM(b.raw_wwtype)) = 'WATER'      THEN 'XX'
+        WHEN UPPER(TRIM(b.raw_wwtype)) = 'COMBINED'   THEN 'CB'
+        WHEN UPPER(TRIM(b.raw_wwtype)) IN ('NOT APPLICABLE','N/A','NA') THEN 'XX'
+        ELSE NULL
+      END
+    ELSE NULL
+  END AS pipe_use,
+
+  /* LACP lateral segment reference */
+  CASE
+    WHEN (b.facility_type = 4 OR (b.facility_type = 10 AND b.unknown_type IN (6,7))) THEN
+      CASE
+        WHEN b.facility_type = 10 AND b.unknown_type IN (6,7) THEN b.facility_id
+        WHEN INSTR(b.lacp_wass_appid, '-', -1) > 1 THEN SUBSTR(b.lacp_wass_appid, 1, INSTR(b.lacp_wass_appid, '-', -1) - 1)
+        ELSE b.lacp_wass_appid
+      END
+    ELSE NULL
+  END AS lateral_segment_reference,
+
+  /* PACP pipe segment reference */
+  CASE
+    WHEN (b.facility_type = 8 OR (b.facility_type = 10 AND b.unknown_type IN (4,5,6,7,8))) THEN
+      CASE
+        WHEN b.raw_pipeid IS NULL THEN
+          CASE WHEN b.facility_type = 10 AND b.unknown_type IN (4,5) THEN b.facility_id ELSE NULL END
+        WHEN b.facility_type = 10 AND b.unknown_type IN (4,5) THEN b.facility_id
+        WHEN UPPER(b.raw_pipeid) LIKE 'PIP%' THEN SUBSTR(b.raw_pipeid, 4)
+        WHEN UPPER(b.raw_pipeid) LIKE 'CBL%' THEN SUBSTR(b.raw_pipeid, 4)
+        ELSE b.raw_pipeid
+      END
+    /* MACP pipe_segment_reference (as in your MACP query) */
+    WHEN (b.facility_type = 2 OR (b.facility_type = 10 AND b.unknown_type IN (2,3))) THEN b.facility_id
+    ELSE NULL
+  END AS pipe_segment_reference,
+
+  /* PACP network IDs */
+  b.upstream_id,
+  b.downstream_id,
+
+  /* UUIDs */
+  b.work_order_task_uuid,
+  b.dr_uuid,
+
+  /* unknown_type (PACP/MACP already output it) */
+  b.unknown_type,
+
+  /* PACP numeric fields */
+  CASE WHEN (b.facility_type = 8 OR (b.facility_type = 10 AND b.unknown_type IN (4,5,6,7,8))) THEN b.raw_diameter_fl END AS height,
+  CASE WHEN (b.facility_type = 8 OR (b.facility_type = 10 AND b.unknown_type IN (4,5,6,7,8))) THEN b.raw_usgroundelev_fl END AS up_elevation,
+  CASE WHEN (b.facility_type = 8 OR (b.facility_type = 10 AND b.unknown_type IN (4,5,6,7,8))) THEN b.raw_usinvertelev_fl END AS up_grade_to_invert,
+  CASE WHEN (b.facility_type = 8 OR (b.facility_type = 10 AND b.unknown_type IN (4,5,6,7,8))) THEN b.raw_dsgroundelev_fl END AS down_elevation,
+  CASE WHEN (b.facility_type = 8 OR (b.facility_type = 10 AND b.unknown_type IN (4,5,6,7,8))) THEN b.raw_dsinvertelev_fl END AS down_grade_to_invert,
+
+  /* Street + drainage_area:
+     - LACP uses lacp_location/lacp_neighbourhd
+     - PACP uses raw_location/raw_usneighbour
+     - MACP resolves between cb/mh
+  */
+  CASE
+    WHEN (b.facility_type = 4 OR (b.facility_type = 10 AND b.unknown_type IN (6,7))) THEN b.lacp_location
+    WHEN (b.facility_type = 8 OR (b.facility_type = 10 AND b.unknown_type IN (4,5,6,7,8))) THEN b.raw_location
+    WHEN (b.facility_type = 2 OR (b.facility_type = 10 AND b.unknown_type = 2)) THEN b.cb_location
+    ELSE b.mh_location
+  END AS street,
+
+  CASE
+    WHEN (b.facility_type = 4 OR (b.facility_type = 10 AND b.unknown_type IN (6,7))) THEN b.lacp_neighbourhd
+    WHEN (b.facility_type = 8 OR (b.facility_type = 10 AND b.unknown_type IN (4,5,6,7,8))) THEN b.raw_usneighbour
+    WHEN (b.facility_type = 2 OR (b.facility_type = 10 AND b.unknown_type = 2)) THEN b.cb_neighbourhd
+    ELSE b.mh_neighbourhd
+  END AS drainage_area,
+
+  /* lengths/sizes/constructed:
+     - LACP: total_length + "SIZE"
+     - PACP: total_length + year_constructed
+  */
+  CASE
+    WHEN (b.facility_type = 4 OR (b.facility_type = 10 AND b.unknown_type IN (6,7))) THEN b.lacp_pipelength
+    WHEN (b.facility_type = 8 OR (b.facility_type = 10 AND b.unknown_type IN (4,5,6,7,8))) THEN b.raw_length_fl
+    ELSE NULL
+  END AS total_length,
+
+  CASE
+    WHEN (b.facility_type = 4 OR (b.facility_type = 10 AND b.unknown_type IN (6,7))) THEN b.lacp_pipesize
+    ELSE NULL
+  END AS "SIZE",
+
+  CASE
+    WHEN (b.facility_type = 8 OR (b.facility_type = 10 AND b.unknown_type IN (4,5,6,7,8))) THEN b.raw_yearconst
+    ELSE NULL
+  END AS year_constructed,
+
+  /* ---------------- MACP-only fields ---------------- */
+  /* manhole_number */
+  CASE
+    WHEN (b.facility_type = 1 OR (b.facility_type = 10 AND b.unknown_type = 3)) THEN REGEXP_REPLACE(b.facility_id, '^MH', '')
+    WHEN (b.facility_type = 2 OR (b.facility_type = 10 AND b.unknown_type = 2)) THEN REGEXP_REPLACE(b.facility_id, '^CB', '')
+    ELSE NULL
+  END AS manhole_number,
+
+  /* mh_use */
+  CASE
+    WHEN (b.facility_type IN (1,2) OR (b.facility_type = 10 AND b.unknown_type IN (2,3))) THEN mhuse.pioneers_code
+    ELSE NULL
+  END AS mh_use,
+
+  /* cover_shape */
+  CASE
+    WHEN (b.facility_type IN (1,2) OR (b.facility_type = 10 AND b.unknown_type IN (2,3))) THEN
+      CASE
+        WHEN (b.facility_type = 2 OR (b.facility_type = 10 AND b.unknown_type = 2)) THEN sc_cb.pioneers_code
+        ELSE sc_mh.pioneers_code
+      END
+    ELSE NULL
+  END AS cover_shape,
+
+  /* wall/bench/channel material (NULL for CB + unknown (2/3) as per your MACP query) */
+  CASE
+    WHEN (b.facility_type = 2 OR (b.facility_type = 10 AND b.unknown_type IN (2,3))) THEN NULL
+    ELSE mat_wall.pioneers_code
+  END AS wall_material,
+
+  CASE
+    WHEN (b.facility_type = 2 OR (b.facility_type = 10 AND b.unknown_type IN (2,3))) THEN NULL
+    ELSE mat_bench.pioneers_code
+  END AS bench_material,
+
+  CASE
+    WHEN (b.facility_type = 2 OR (b.facility_type = 10 AND b.unknown_type IN (2,3))) THEN NULL
+    ELSE mat_chan.pioneers_code
+  END AS channel_material,
+
+  /* wall_bysize / wall_depth / elevation */
+  CASE
+    WHEN (b.facility_type = 2 OR (b.facility_type = 10 AND b.unknown_type = 2)) THEN b.cb_diameter_fl
+    WHEN (b.facility_type = 1 OR (b.facility_type = 10 AND b.unknown_type = 3)) THEN b.mh_diameter_fl
+    ELSE NULL
+  END AS wall_bysize,
+
+  CASE
+    WHEN (b.facility_type = 2 OR (b.facility_type = 10 AND b.unknown_type = 2)) THEN b.cb_depth_fl
+    WHEN (b.facility_type = 1 OR (b.facility_type = 10 AND b.unknown_type = 3)) THEN b.mh_depth_fl
+    ELSE NULL
+  END AS wall_depth,
+
+  CASE
+    WHEN (b.facility_type = 2 OR (b.facility_type = 10 AND b.unknown_type = 2)) THEN NULL
+    WHEN (b.facility_type = 1 OR (b.facility_type = 10 AND b.unknown_type = 3)) THEN b.mh_groundelevat_fl
+    ELSE NULL
+  END AS elevation,
+
+  /* frame_material for CB */
+  CASE
+    WHEN (b.facility_type = 2 OR (b.facility_type = 10 AND b.unknown_type = 2)) THEN b.cb_framecover
+    ELSE NULL
+  END AS frame_material
+
+FROM base b
+
+/* material mappings */
+LEFT JOIN CUSTOMERDATA.EPSEWERAI_MATERIAL_CODE mc_sc
+  ON UPPER(TRIM(mc_sc.ivara_material)) = UPPER(TRIM(b.lacp_pipetype))
+
+LEFT JOIN CUSTOMERDATA.EPSEWERAI_MATERIAL_CODE mc_pipe
+  ON UPPER(TRIM(mc_pipe.ivara_material)) = UPPER(TRIM(b.raw_material))
+
+/* shape lookup for PACP */
+LEFT JOIN CUSTOMERDATA.EPSEWERAI_SHAPE_CODE sc_pipe
+  ON UPPER(TRIM(sc_pipe.ivara_shape)) = UPPER(TRIM(b.raw_shape))
+
+/* MACP shape lookups */
+LEFT JOIN CUSTOMERDATA.EPSEWERAI_SHAPE_CODE sc_mh
+  ON UPPER(TRIM(sc_mh.ivara_shape)) = UPPER(TRIM(b.mh_shape))
+
+LEFT JOIN CUSTOMERDATA.EPSEWERAI_SHAPE_CODE sc_cb
+  ON UPPER(TRIM(sc_cb.ivara_shape)) = UPPER(TRIM(b.cb_shape))
+
+/* mh_use lookup */
+LEFT JOIN mhuse_lkp mhuse
+  ON UPPER(TRIM(
+       CASE
+         WHEN (b.facility_type = 2 OR (b.facility_type = 10 AND b.unknown_type = 2))
+           THEN b.cb_wwtype
+         ELSE b.mh_wwtype
+       END
+     )) = mhuse.ivara_mh_use
+
+/* MACP material code mappings */
+LEFT JOIN CUSTOMERDATA.EPSEWERAI_MATERIAL_CODE mat_wall
+  ON UPPER(TRIM(mat_wall.ivara_material)) = UPPER(TRIM(b.mh_cone))
+
+LEFT JOIN CUSTOMERDATA.EPSEWERAI_MATERIAL_CODE mat_bench
+  ON UPPER(TRIM(mat_bench.ivara_material)) = UPPER(TRIM(b.mh_bench))
+
+LEFT JOIN CUSTOMERDATA.EPSEWERAI_MATERIAL_CODE mat_chan
+  ON UPPER(TRIM(mat_chan.ivara_material)) = UPPER(TRIM(b.mh_channel))
+
+/* Optional filter */
+-- WHERE b.work_orders_number = '279600.1'
+
+ORDER BY
+  b.facility_type,
+  b.work_orders_number DESC;
