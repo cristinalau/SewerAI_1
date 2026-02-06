@@ -1,6 +1,5 @@
 /* Combined: LACP + PACP + MACP
-   - No table changes, query-only
-   - Output columns are from your 3 queries (some NULL by type)
+   Fixes ORA-00932 by forcing potentially-NUMERIC join fields to CHAR via TO_CHAR()
 */
 
 WITH
@@ -101,10 +100,8 @@ base AS (
     e.createdate_dttm,
     e.lastupdate_dttm,
 
-    /* unknown subtype */
     ep2.unknfacType                     AS unknown_type,
 
-    /* UUIDs */
     a.uuid                              AS work_order_task_uuid,
     e.uuid                              AS dr_uuid,
 
@@ -184,22 +181,20 @@ base AS (
   LEFT JOIN clean_longdesc_final cli
     ON cli.workordertaskoi = a.workordertaskoi
 
-  /* Keep only rows that belong to any of the 3 families */
   WHERE
-       /* LACP: service conn OR unknown LACP */
+       /* LACP */
        e1.facilitytype = 4
     OR (e1.facilitytype = 10 AND ep2.unknfacType IN (6,7))
 
-    OR /* PACP: pipe OR unknown pipe-like */
+    OR /* PACP */
        e1.facilitytype = 8
     OR (e1.facilitytype = 10 AND ep2.unknfacType IN (4,5,6,7,8))
 
-    OR /* MACP: MH/CB OR unknown MH/CB */
+    OR /* MACP */
        e1.facilitytype IN (1,2)
     OR (e1.facilitytype = 10 AND ep2.unknfacType IN (2,3))
 ),
 
-/* Lookups */
 mhuse_lkp AS (
   SELECT UPPER(TRIM(ivara_mh_use)) AS ivara_mh_use, pioneers_code
   FROM mh_use_map
@@ -227,21 +222,18 @@ SELECT
     ELSE NULL
   END AS inspection_type,
 
-  /* material (LACP/PACP), MACP materials live in wall/bench/channel below */
+  /* material */
   COALESCE(
-    /* LACP */
     CASE
       WHEN (b.facility_type = 4 OR (b.facility_type = 10 AND b.unknown_type IN (6,7)))
         THEN mc_sc.pioneers_code
       ELSE NULL
     END,
-    /* PACP */
     CASE
       WHEN (b.facility_type = 8 OR (b.facility_type = 10 AND b.unknown_type IN (4,5,6,7,8)))
         THEN mc_pipe.pioneers_code
       ELSE NULL
     END,
-    /* fallback */
     CASE
       WHEN (b.facility_type = 4 OR (b.facility_type = 10 AND b.unknown_type IN (6,7))) THEN b.lacp_pipetype
       WHEN (b.facility_type = 8 OR (b.facility_type = 10 AND b.unknown_type IN (4,5,6,7,8))) THEN b.raw_material
@@ -256,10 +248,7 @@ SELECT
     ELSE NULL
   END AS shape,
 
-  /* pip_type:
-     - LACP/PACP used pip_type
-     - MACP used ACCESS_TYPE, but we keep the same output column name "pip_type"
-  */
+  /* pip_type */
   CASE
     WHEN (b.facility_type = 4 OR (b.facility_type = 10 AND b.unknown_type IN (6,7))) THEN 'Service Connection'
     WHEN (b.facility_type = 8 OR (b.facility_type = 10 AND b.unknown_type IN (4,5,6,7,8))) THEN 'Pipe'
@@ -268,7 +257,7 @@ SELECT
     ELSE 'Unknown Facility'
   END AS pip_type,
 
-  /* pipe_use (LACP from recordtype, PACP from wwtype) */
+  /* pipe_use */
   CASE
     WHEN (b.facility_type = 4 OR (b.facility_type = 10 AND b.unknown_type IN (6,7))) THEN
       CASE
@@ -292,7 +281,7 @@ SELECT
     ELSE NULL
   END AS pipe_use,
 
-  /* LACP lateral segment reference */
+  /* lateral_segment_reference (LACP only) */
   CASE
     WHEN (b.facility_type = 4 OR (b.facility_type = 10 AND b.unknown_type IN (6,7))) THEN
       CASE
@@ -303,7 +292,7 @@ SELECT
     ELSE NULL
   END AS lateral_segment_reference,
 
-  /* PACP pipe segment reference */
+  /* pipe_segment_reference (PACP + MACP) */
   CASE
     WHEN (b.facility_type = 8 OR (b.facility_type = 10 AND b.unknown_type IN (4,5,6,7,8))) THEN
       CASE
@@ -314,7 +303,6 @@ SELECT
         WHEN UPPER(b.raw_pipeid) LIKE 'CBL%' THEN SUBSTR(b.raw_pipeid, 4)
         ELSE b.raw_pipeid
       END
-    /* MACP pipe_segment_reference (as in your MACP query) */
     WHEN (b.facility_type = 2 OR (b.facility_type = 10 AND b.unknown_type IN (2,3))) THEN b.facility_id
     ELSE NULL
   END AS pipe_segment_reference,
@@ -327,7 +315,6 @@ SELECT
   b.work_order_task_uuid,
   b.dr_uuid,
 
-  /* unknown_type (PACP/MACP already output it) */
   b.unknown_type,
 
   /* PACP numeric fields */
@@ -337,11 +324,7 @@ SELECT
   CASE WHEN (b.facility_type = 8 OR (b.facility_type = 10 AND b.unknown_type IN (4,5,6,7,8))) THEN b.raw_dsgroundelev_fl END AS down_elevation,
   CASE WHEN (b.facility_type = 8 OR (b.facility_type = 10 AND b.unknown_type IN (4,5,6,7,8))) THEN b.raw_dsinvertelev_fl END AS down_grade_to_invert,
 
-  /* Street + drainage_area:
-     - LACP uses lacp_location/lacp_neighbourhd
-     - PACP uses raw_location/raw_usneighbour
-     - MACP resolves between cb/mh
-  */
+  /* street */
   CASE
     WHEN (b.facility_type = 4 OR (b.facility_type = 10 AND b.unknown_type IN (6,7))) THEN b.lacp_location
     WHEN (b.facility_type = 8 OR (b.facility_type = 10 AND b.unknown_type IN (4,5,6,7,8))) THEN b.raw_location
@@ -349,6 +332,7 @@ SELECT
     ELSE b.mh_location
   END AS street,
 
+  /* drainage_area */
   CASE
     WHEN (b.facility_type = 4 OR (b.facility_type = 10 AND b.unknown_type IN (6,7))) THEN b.lacp_neighbourhd
     WHEN (b.facility_type = 8 OR (b.facility_type = 10 AND b.unknown_type IN (4,5,6,7,8))) THEN b.raw_usneighbour
@@ -356,41 +340,37 @@ SELECT
     ELSE b.mh_neighbourhd
   END AS drainage_area,
 
-  /* lengths/sizes/constructed:
-     - LACP: total_length + "SIZE"
-     - PACP: total_length + year_constructed
-  */
+  /* total_length */
   CASE
     WHEN (b.facility_type = 4 OR (b.facility_type = 10 AND b.unknown_type IN (6,7))) THEN b.lacp_pipelength
     WHEN (b.facility_type = 8 OR (b.facility_type = 10 AND b.unknown_type IN (4,5,6,7,8))) THEN b.raw_length_fl
     ELSE NULL
   END AS total_length,
 
+  /* "SIZE" */
   CASE
     WHEN (b.facility_type = 4 OR (b.facility_type = 10 AND b.unknown_type IN (6,7))) THEN b.lacp_pipesize
     ELSE NULL
   END AS "SIZE",
 
+  /* year_constructed */
   CASE
     WHEN (b.facility_type = 8 OR (b.facility_type = 10 AND b.unknown_type IN (4,5,6,7,8))) THEN b.raw_yearconst
     ELSE NULL
   END AS year_constructed,
 
   /* ---------------- MACP-only fields ---------------- */
-  /* manhole_number */
   CASE
     WHEN (b.facility_type = 1 OR (b.facility_type = 10 AND b.unknown_type = 3)) THEN REGEXP_REPLACE(b.facility_id, '^MH', '')
     WHEN (b.facility_type = 2 OR (b.facility_type = 10 AND b.unknown_type = 2)) THEN REGEXP_REPLACE(b.facility_id, '^CB', '')
     ELSE NULL
   END AS manhole_number,
 
-  /* mh_use */
   CASE
     WHEN (b.facility_type IN (1,2) OR (b.facility_type = 10 AND b.unknown_type IN (2,3))) THEN mhuse.pioneers_code
     ELSE NULL
   END AS mh_use,
 
-  /* cover_shape */
   CASE
     WHEN (b.facility_type IN (1,2) OR (b.facility_type = 10 AND b.unknown_type IN (2,3))) THEN
       CASE
@@ -400,7 +380,6 @@ SELECT
     ELSE NULL
   END AS cover_shape,
 
-  /* wall/bench/channel material (NULL for CB + unknown (2/3) as per your MACP query) */
   CASE
     WHEN (b.facility_type = 2 OR (b.facility_type = 10 AND b.unknown_type IN (2,3))) THEN NULL
     ELSE mat_wall.pioneers_code
@@ -416,7 +395,6 @@ SELECT
     ELSE mat_chan.pioneers_code
   END AS channel_material,
 
-  /* wall_bysize / wall_depth / elevation */
   CASE
     WHEN (b.facility_type = 2 OR (b.facility_type = 10 AND b.unknown_type = 2)) THEN b.cb_diameter_fl
     WHEN (b.facility_type = 1 OR (b.facility_type = 10 AND b.unknown_type = 3)) THEN b.mh_diameter_fl
@@ -435,7 +413,6 @@ SELECT
     ELSE NULL
   END AS elevation,
 
-  /* frame_material for CB */
   CASE
     WHEN (b.facility_type = 2 OR (b.facility_type = 10 AND b.unknown_type = 2)) THEN b.cb_framecover
     ELSE NULL
@@ -454,32 +431,32 @@ LEFT JOIN CUSTOMERDATA.EPSEWERAI_MATERIAL_CODE mc_pipe
 LEFT JOIN CUSTOMERDATA.EPSEWERAI_SHAPE_CODE sc_pipe
   ON UPPER(TRIM(sc_pipe.ivara_shape)) = UPPER(TRIM(b.raw_shape))
 
-/* MACP shape lookups */
+/* MACP shape lookups (CAST TO CHAR to avoid ORA-00932) */
 LEFT JOIN CUSTOMERDATA.EPSEWERAI_SHAPE_CODE sc_mh
-  ON UPPER(TRIM(sc_mh.ivara_shape)) = UPPER(TRIM(b.mh_shape))
+  ON UPPER(TRIM(sc_mh.ivara_shape)) = UPPER(TRIM(TO_CHAR(b.mh_shape)))
 
 LEFT JOIN CUSTOMERDATA.EPSEWERAI_SHAPE_CODE sc_cb
-  ON UPPER(TRIM(sc_cb.ivara_shape)) = UPPER(TRIM(b.cb_shape))
+  ON UPPER(TRIM(sc_cb.ivara_shape)) = UPPER(TRIM(TO_CHAR(b.cb_shape)))
 
 /* mh_use lookup */
 LEFT JOIN mhuse_lkp mhuse
   ON UPPER(TRIM(
        CASE
          WHEN (b.facility_type = 2 OR (b.facility_type = 10 AND b.unknown_type = 2))
-           THEN b.cb_wwtype
-         ELSE b.mh_wwtype
+           THEN TO_CHAR(b.cb_wwtype)
+         ELSE TO_CHAR(b.mh_wwtype)
        END
      )) = mhuse.ivara_mh_use
 
-/* MACP material code mappings */
+/* MACP material code mappings (CAST TO CHAR to avoid ORA-00932) */
 LEFT JOIN CUSTOMERDATA.EPSEWERAI_MATERIAL_CODE mat_wall
-  ON UPPER(TRIM(mat_wall.ivara_material)) = UPPER(TRIM(b.mh_cone))
+  ON UPPER(TRIM(mat_wall.ivara_material)) = UPPER(TRIM(TO_CHAR(b.mh_cone)))
 
 LEFT JOIN CUSTOMERDATA.EPSEWERAI_MATERIAL_CODE mat_bench
-  ON UPPER(TRIM(mat_bench.ivara_material)) = UPPER(TRIM(b.mh_bench))
+  ON UPPER(TRIM(mat_bench.ivara_material)) = UPPER(TRIM(TO_CHAR(b.mh_bench)))
 
 LEFT JOIN CUSTOMERDATA.EPSEWERAI_MATERIAL_CODE mat_chan
-  ON UPPER(TRIM(mat_chan.ivara_material)) = UPPER(TRIM(b.mh_channel))
+  ON UPPER(TRIM(mat_chan.ivara_material)) = UPPER(TRIM(TO_CHAR(b.mh_channel)))
 
 /* Optional filter */
 -- WHERE b.work_orders_number = '279600.1'
