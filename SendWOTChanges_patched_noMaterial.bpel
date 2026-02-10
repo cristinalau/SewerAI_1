@@ -1,0 +1,579 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process name="SendWOTChanges" targetNamespace="http://xmlns.oracle.com/Ivara12c/IvaraToSewerAI/SendWOTChanges"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+         xmlns:fw="http://xmlns.oracle.com/pcbpel/adapter/file/Ivara12c/IvaraToSewerAI/ExportWOTUpdate_sp"
+         xmlns:rw="http://xmlns.oracle.com/pcbpel/adapter/db/Ivara12c/IvaraToSewerAI/ReadWOTSewerAIData"
+         xmlns:tnsRead="http://xmlns.oracle.com/pcbpel/adapter/db/Ivara12c/IvaraToSewerAI/ReadWOTSewerAIData"
+         xmlns:tnsUpdate="http://xmlns.oracle.com/pcbpel/adapter/db/Ivara12c/IvaraToSewerAI/UpdateWOTSewerAIData"
+         xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/ReadWOTSewerAIData"
+         xmlns:opaque="http://xmlns.oracle.com/pcbpel/adapter/opaque/" suppressJoinFailure="yes"
+         xmlns:ui="http://xmlns.oracle.com/soa/designer"
+         xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/db/Ivara12c/IvaraToSewerAI/UpdateWOTSewerAIData"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns:ns2="http://xmlns.oracle.com/pcbpel/adapter/db/top/UpdateWOTSewerAIData"
+         xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc"
+         xmlns:bpm="http://xmlns.oracle.com/bpmn20/extensions"
+         xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20"
+         xmlns:ess="http://xmlns.oracle.com/scheduler" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath"
+         xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions"
+         xmlns:ora="http://schemas.oracle.com/xpath/extension"
+         xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue"
+         xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+         xmlns:xdk="http://schemas.oracle.com/bpel/extension/xpath/function/xdk"
+         xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath"
+         xmlns:bpel2="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap"
+         xmlns:ns3="http://xmlns.oracle.com/Ivara12c/IvaraToSewerAI/SewerAIProjects"
+         xmlns:ns4="http://TargetNamespace.com/SewerAIProjects_putProjects_request"
+         xmlns:rc="http://xmlns.oracle.com/pcbpel/adapter/db/Ivara12c/IvaraToSewerAI/ReadCRInspect"
+         xmlns:uc="http://xmlns.oracle.com/pcbpel/adapter/db/Ivara12c/IvaraToSewerAI/UpdateCRInspectStatus"
+         xmlns:vid="http://xmlns.oracle.com/Ivara12c/IvaraToSewerAI/SewerAIVideos"
+         xmlns:vl="http://TargetNamespace.com/SewerAIProjects_putVideosLACP_request"
+         xmlns:vm="http://TargetNamespace.com/SewerAIProjects_putVideosMACP_request"
+         xmlns:vp="http://TargetNamespace.com/SewerAIProjects_putVideosPACP_request"
+         xmlns:fw2="http://xmlns.oracle.com/pcbpel/adapter/file/Ivara12c/IvaraToSewerAI/ExportInspectUpdate_sp"
+         xmlns:topCRI="http://xmlns.oracle.com/pcbpel/adapter/db/top/ReadCRInspect"
+         xmlns:topUCS="http://xmlns.oracle.com/pcbpel/adapter/db/top/UpdateCRInspectStatus">
+  <!-- Imports -->
+  <import importType="http://schemas.xmlsoap.org/wsdl/" location="../WSDLs/ReadWOTSewerAIData.wsdl"
+          namespace="http://xmlns.oracle.com/pcbpel/adapter/db/Ivara12c/IvaraToSewerAI/ReadWOTSewerAIData"
+          ui:processWSDL="true"/>
+  <import importType="http://schemas.xmlsoap.org/wsdl/" location="../WSDLs/UpdateWOTSewerAIData.wsdl"
+          namespace="http://xmlns.oracle.com/pcbpel/adapter/db/Ivara12c/IvaraToSewerAI/UpdateWOTSewerAIData"/>
+  <import importType="http://schemas.xmlsoap.org/wsdl/" location="../WSDLs/ExportWOTUpdate_sp.wsdl"
+          namespace="http://xmlns.oracle.com/pcbpel/adapter/file/Ivara12c/IvaraToSewerAI/ExportWOTUpdate_sp"/>
+  <import importType="http://www.w3.org/2001/XMLSchema" location="../Schemas/SewerAIProjects.xsd"
+          namespace="http://TargetNamespace.com/SewerAIProjects_putProjects_request"/>
+  <!-- New: DB Read (CR_INSPECT) -->
+  <import importType="http://schemas.xmlsoap.org/wsdl/" location="../WSDLs/ReadCRInspect.wsdl"
+          namespace="http://xmlns.oracle.com/pcbpel/adapter/db/Ivara12c/IvaraToSewerAI/ReadCRInspect"/>
+  <!-- New: DB Update (CR_INSPECT status) -->
+  <import importType="http://schemas.xmlsoap.org/wsdl/" location="../WSDLs/UpdateCRInspectStatus.wsdl"
+          namespace="http://xmlns.oracle.com/pcbpel/adapter/db/Ivara12c/IvaraToSewerAI/UpdateCRInspectStatus"/>
+  <!-- New: REST (videos) -->
+  <import importType="http://schemas.xmlsoap.org/wsdl/" location="../WSDLs/SewerAIVideos.wsdl"
+          namespace="http://xmlns.oracle.com/Ivara12c/IvaraToSewerAI/SewerAIVideos"/>
+  <import importType="http://schemas.xmlsoap.org/wsdl/" location="../WSDLs/ExportInspectUpdate_sp.wsdl"
+          namespace="http://xmlns.oracle.com/pcbpel/adapter/file/Ivara12c/IvaraToSewerAI/ExportInspectUpdate_sp"/>
+  <!-- Partner links -->
+  <partnerLinks>
+    <partnerLink name="ReadWOTSewerAIData" partnerLinkType="rw:ReadWOTSewerAIData_plt"
+                 myRole="ReadWOTSewerAIData_role"/>
+    <partnerLink name="ExportWOTUpdate_sp" partnerLinkType="fw:Write_plt" partnerRole="Write_role"/>
+    <partnerLink name="UpdateWOTSewerAIData" partnerLinkType="ns1:UpdateWOTSewerAIData_plt"
+                 partnerRole="UpdateWOTSewerAIData_role"/>
+    <partnerLink name="SewerAIProjects" partnerLinkType="ns3:SewerAIProjects" partnerRole="SewerAIProjectsProvider"/>
+    <!-- New: Read rows from CUSTOMERDATA.EPSEWERAI_CR_INSPECT -->
+    <!-- New: Update status in CUSTOMERDATA.EPSEWERAI_CR_INSPECT -->
+    <!-- New: Outbound REST to SewerAI videos (/videos/lacp|macp|pacp) -->
+    <partnerLink name="SewerAIVideos" partnerLinkType="vid:SewerAIVideos" partnerRole="SewerAIVideosProvider"/>
+    <partnerLink name="ReadCRInspect" partnerLinkType="rc:ReadCRInspect_plt" partnerRole="ReadCRInspect_role"/>
+    <partnerLink name="ExportInspectUpdate_sp" partnerLinkType="fw2:Write_plt" partnerRole="Write_role"/>
+    <partnerLink name="UpdateCRInspectStatus" partnerLinkType="uc:UpdateCRInspectStatus_plt"
+                 partnerRole="UpdateCRInspectStatus_role"/>
+  </partnerLinks>
+  <!-- Variables -->
+  <variables>
+    <!-- Inbound DB read -->
+    <variable name="inputVariableWOT" messageType="rw:EpseweraiWotStg1Collection_msg"/>
+    <!-- File write (audit the JSON) -->
+    <variable name="fileWriteRequest" messageType="fw:Write_msg"/>
+    <!-- DB update input -->
+    <variable name="InvokeUpdateFeedStatus_update_InputVariable" messageType="ns1:EpseweraiWotStg1Collection_msg"/>
+    <variable name="vPutProjectsReq" messageType="ns3:putProjects_inputMessage"/>
+    <!-- Working strings -->
+    <variable name="vProjectSid" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+    <!-- <variable name="varHttpHeaders" type="xsd:string"/>  -->
+    <!-- HTTP header variables for REST invoke -->
+    <variable name="vAuth" type="xsd:string"/>
+    <variable name="vCT" type="xsd:string"/>
+    <variable name="vAccept" type="xsd:string"/>
+    <variable name="vPutVideosStatusCode" type="xsd:string"/>
+    <variable name="vPutVideosFault" type="xsd:string"/>
+    <variable name="vRespType" type="xsd:string"/>
+    <variable name="vDateStartedISO" type="xsd:string"/>
+    <variable name="vEstimatedCompletionISO" type="xsd:string"/>
+    <variable name="vDueDateISO" type="xsd:string"/>
+    <variable name="vHeadersJson" type="xsd:string"/>
+    <!-- ===== Variables for InvokeReadCRInspect (created automatically if you use the wizard) ===== -->
+    <variable name="InvokeReadCRInspect_ReadCRInspectSelect_InputVariable"
+              messageType="rc:ReadCRInspectSelect_inputParameters"/>
+    <variable name="InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable"
+              messageType="rc:VCrInspectToSendCollection_msg"/>
+    <!-- REST input messages -->
+    <variable name="putVideosLACP_In" messageType="vid:putVideosLACP_inputMessage"/>
+    <variable name="putVideosMACP_In" messageType="vid:putVideosMACP_inputMessage"/>
+    <variable name="putVideosPACP_In" messageType="vid:putVideosPACP_inputMessage"/>
+    <!-- DB update (status) message -->
+    <variable name="UpdateCRInspectStatus_In" messageType="uc:EpseweraiCrInspectCollection_msg"/>
+    <!-- Working status strings per row -->
+    <variable name="vFeedStatus" type="xsd:string"/>
+    <variable name="vFeedMessage" type="xsd:string"/>
+    <variable name="fileInspectWriteRequest" messageType="fw2:Write_msg"/>
+    <variable name="vInspectJson" type="xsd:string"/>
+    <variable name="vInspectRowCount" type="xsd:int"/>
+    <variable name="vOutFileName" type="xsd:string"/>
+  </variables>
+  <sequence name="Main">
+    <!-- Create instance on DB poll -->
+    <receive name="receiveFromDB" partnerLink="ReadWOTSewerAIData" portType="rw:ReadWOTSewerAIData_ptt"
+             operation="receive" variable="inputVariableWOT" createInstance="yes"/>
+    <scope name="EncodeAndInvoke">
+      <faultHandlers>
+        <catchAll>
+          <sequence>
+            <extensionActivity>
+              <bpelx:exec name="captureErrorLog">
+                <![CDATA[addAuditTrailEntry("EncodeAndInvoke scope caught a fault.");]]>
+              </bpelx:exec>
+            </extensionActivity>
+          </sequence>
+        </catchAll>
+      </faultHandlers>
+      <sequence>
+        <!-- Build JSON from DB row and Base64-encode for FILE + REST (OPAQUE) -->
+        <extensionActivity>
+          <bpelx:exec name="EncodeAndSetOpaquePayload">
+            <![CDATA[addAuditTrailEntry("EncodeAndSetOpaquePayload (SewerAI payload; date mappings applied) started.");         
+try {     
+    // ====== CONSTANTS ======     
+    final String ACCOUNT_SID           = "a2edc3a7-82b9-4a9f-ba61-09a58590dfb0";     
+    final String PACP_SPEC_SID         = "f6769e72-411f-4043-95e7-805ddef1249f";     
+    final String LACP_SPEC_SID         = "920dd368-a276-4b73-b629-721cadf842c4";     
+    final String MACP_SPEC_SID         = "419a42a4-ae2c-435b-9360-c99334ccd567";     
+     
+    // ====== READ INBOUND DB PAYLOAD ======     
+    org.w3c.dom.Element collRoot =     
+        (org.w3c.dom.Element)getVariableData(     
+            "inputVariableWOT",     
+            "EpseweraiWotStg1Collection",     
+            "/top:EpseweraiWotStg1Collection");     
+     
+    if (collRoot == null)     
+        throw new RuntimeException("EpseweraiWotStg1Collection not found.");     
+     
+    final String NS = "http://xmlns.oracle.com/pcbpel/adapter/db/top/ReadWOTSewerAIData";     
+    org.w3c.dom.NodeList rows =     
+        collRoot.getElementsByTagNameNS(NS, "EpseweraiWotStg1");     
+     
+    if (rows == null || rows.getLength() == 0)     
+        throw new RuntimeException("No DB rows returned.");     
+     
+    org.w3c.dom.Element row = (org.w3c.dom.Element)rows.item(0);     
+     
+    // ====== EXTRACT FIELDS ======     
+    String wotasktitle      = "";     
+    String plndstrtdate     = "";     
+    String plndcompdate     = "";     
+    String taskUuidText     = "";     
+     
+    org.w3c.dom.NodeList nl;     
+     
+    nl = row.getElementsByTagNameNS(NS, "wotasktitle");     
+    if (nl != null && nl.getLength() > 0)     
+        wotasktitle = nl.item(0).getTextContent();     
+     
+    nl = row.getElementsByTagNameNS(NS, "plndstrtdateDttm");     
+    if (nl != null && nl.getLength() > 0)     
+        plndstrtdate = nl.item(0).getTextContent();     
+     
+    nl = row.getElementsByTagNameNS(NS, "plndcompdateDttm");     
+    if (nl != null && nl.getLength() > 0)     
+        plndcompdate = nl.item(0).getTextContent();     
+     
+    nl = row.getElementsByTagNameNS(NS, "taskUuid");     
+    if (nl != null && nl.getLength() > 0)     
+        taskUuidText = nl.item(0).getTextContent().trim();     
+     
+    // ====== CONVERT RAW / BASE64 / HEX taskUuid → UUID ======     
+    String projectSid = null;     
+     
+    try {     
+        boolean looksLikeBase64 =     
+            taskUuidText.matches("^[A-Za-z0-9+/]+={0,2}$");     
+     
+        if (looksLikeBase64) {     
+            byte[] bytes = java.util.Base64.getDecoder().decode(taskUuidText);     
+            if (bytes != null && bytes.length == 16) {     
+                StringBuilder hex = new StringBuilder(32);     
+                for (byte b : bytes)     
+                    hex.append(String.format("%02x", b));     
+                String h = hex.toString();     
+                projectSid =     
+                    h.substring(0,8) + "-" +     
+                    h.substring(8,12) + "-" +     
+                    h.substring(12,16) + "-" +     
+                    h.substring(16,20) + "-" +     
+                    h.substring(20);     
+            } else {     
+                projectSid = taskUuidText;     
+            }     
+        }     
+        else if (taskUuidText.length() == 32 &&     
+                 taskUuidText.matches("^[0-9A-Fa-f]{32}$")) {     
+            String h = taskUuidText.toLowerCase();     
+            projectSid =     
+                h.substring(0,8) + "-" +     
+                h.substring(8,12) + "-" +     
+                h.substring(12,16) + "-" +     
+                h.substring(16,20) + "-" +     
+                h.substring(20);     
+        }     
+        else {     
+            try {     
+                projectSid = java.util.UUID.fromString(taskUuidText).toString();     
+            } catch (Throwable t) {     
+                projectSid = java.util.UUID.randomUUID().toString();     
+            }     
+        }     
+    } catch (Throwable t) {     
+        projectSid = java.util.UUID.randomUUID().toString();     
+    }     
+     
+    addAuditTrailEntry("Resolved projectSid=" + projectSid);     
+     
+    // ====== DATE NORMALIZATION ======     
+    java.time.OffsetDateTime now = java.time.OffsetDateTime.now();     
+    java.time.format.DateTimeFormatter FMT =     
+        java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;     
+     
+    java.util.function.Function<String,String> normalize =     
+        (raw) -> {     
+            if (raw == null || raw.trim().isEmpty())     
+                return FMT.format(now);     
+            try { return java.time.OffsetDateTime.parse(raw).format(FMT); }     
+            catch (Throwable ignore) {}     
+            try {     
+                String s = raw.contains(" ") && !raw.contains("T")     
+                    ? raw.replace(' ', 'T') : raw;     
+                return java.time.LocalDateTime.parse(s)     
+                    .atOffset(java.time.ZoneOffset.UTC)     
+                    .format(FMT);     
+            } catch (Throwable ignore) {}     
+            try { return java.time.LocalDate.parse(raw).atStartOfDay()     
+                    .atOffset(java.time.ZoneOffset.UTC)     
+                    .format(FMT); }     
+            catch (Throwable ignore) {}     
+            return FMT.format(now);     
+        };     
+     
+    String dateStartedISO = normalize.apply(plndstrtdate);     
+    String compISO        = normalize.apply(plndcompdate);     
+     
+    // ====== EXPOSE VALUES TO BPEL VARIABLES (REQUIRED FOR REST ASSIGN) ======     
+    setVariableData("vProjectSid", projectSid);     
+    setVariableData("vDateStartedISO", dateStartedISO);     
+    setVariableData("vEstimatedCompletionISO", compISO);     
+    setVariableData("vDueDateISO", compISO);     
+     
+    // ====== BUILD JSON PAYLOAD ======     
+    StringBuilder sb = new StringBuilder(512);     
+     
+    String escName = (wotasktitle == null ? "" :     
+                      wotasktitle.replace("\\","\\\\")     
+                                 .replace("\"","\\\""));     
+     
+    sb.append("{")     
+      .append("\"sid\":\"").append(projectSid).append("\",")     
+     
+      .append("\"account\":{")     
+        .append("\"sid\":\"").append(ACCOUNT_SID).append("\"")     
+      .append("},")     
+     
+      .append("\"name\":\"").append(escName).append("\",")     
+     
+      .append("\"status\":\"active\",")     
+      .append("\"goal_state\":\"autocode_complete\",")     
+      .append("\"notes\":\"Created by API test script\",")     
+     
+      .append("\"pacp_project_spec\":{")     
+        .append("\"sid\":\"").append(PACP_SPEC_SID).append("\"")     
+      .append("},")     
+     
+      .append("\"lacp_project_spec\":{")     
+        .append("\"sid\":\"").append(LACP_SPEC_SID).append("\"")     
+      .append("},")     
+     
+      .append("\"macp_project_spec\":{")     
+        .append("\"sid\":\"").append(MACP_SPEC_SID).append("\"")     
+      .append("},")     
+     
+      .append("\"run_autocode_on_upload\":false,")     
+      .append("\"date_started\":\"").append(dateStartedISO).append("\",")     
+      .append("\"estimated_completion_date\":\"").append(compISO).append("\",")     
+      .append("\"date_due\":\"").append(compISO).append("\",")     
+     
+      .append("\"date_finished\":null,")     
+      .append("\"pacp_expected_inspection_count\":0,")     
+      .append("\"pacp_expected_linear_feet\":0,")     
+      .append("\"lacp_expected_inspection_count\":0,")     
+      .append("\"lacp_expected_linear_feet\":0,")     
+      .append("\"macp_expected_inspection_count\":0,")     
+      .append("\"macp_expected_linear_feet\":0")     
+     
+      .append("}");     
+     
+    String payloadJson = sb.toString();     
+     
+    // ====== WRITE JSON TO OPAQUE (BASE64) ======     
+    String base64 = java.util.Base64.getEncoder()     
+                    .encodeToString(payloadJson.getBytes("UTF-8"));     
+     
+    setVariableData("fileWriteRequest", "opaque", "/opaque:opaqueElement", base64);     
+    setVariableData("vAuth", "X-SAI 85370e3c0aad4f1bc54b52eab1b48c90a159b42d");   
+    setVariableData("vCT", "application/json");   
+   
+   
+    addAuditTrailEntry("Opaque payload generated and Base64 encoded.");     
+     
+} catch (Throwable t) {     
+    addAuditTrailEntry("Error in Java Embedding: " + t.getMessage());     
+    throw new RuntimeException(t);     
+}]]>
+          </bpelx:exec>
+        </extensionActivity>
+        <!-- Write the JSON file (unchanged) -->
+        <invoke name="writeOpaque" partnerLink="ExportWOTUpdate_sp" portType="fw:Write_ptt" operation="Write"
+                inputVariable="fileWriteRequest" bpelx:invokeAsDetail="yes"/>
+        <assign name="BuildHeadersJson" bpelx:insertMissingToData="yes">
+          <copy>
+            <from expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">concat('{"Authorization":"', $vAuth, '","Content-Type":"', $vCT, '"}')</from>
+            <to>$vHeadersJson</to>
+          </copy>
+        </assign>
+        <assign name="SetAuth">
+<copy>
+                                        <from>
+                          $InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:downstreamMh
+                        </from>
+                                        <to>$putVideosPACP_In.request/vp:items/vp:header/vp:Downstream_MH</to>
+                                      </copy>
+                                      <copy>
+                                        <from>
+                          $InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:upstreamMh
+                        </from>
+                                        <to>$putVideosPACP_In.request/vp:items/vp:header/vp:Upstream_MH</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:shape</from>
+                                        <to>$putVideosPACP_In.request/vp:items/vp:header/vp:Shape</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:drainageArea</from>
+                                        <to expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">$putVideosPACP_In.request/vp:items/vp:header/vp:Drainage_Area</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:street</from>
+                                        <to expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">$putVideosPACP_In.request/vp:items/vp:header/vp:Street</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:city</from>
+                                        <to expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">$putVideosPACP_In.request/vp:items/vp:header/vp:City</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:height</from>
+                                        <to expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">$putVideosPACP_In.request/vp:items/vp:header/vp:Height</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:upElevation</from>
+                                        <to expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">$putVideosPACP_In.request/vp:items/vp:header/vp:Up_Elevation</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:upGradeToInvert</from>
+                                        <to expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">$putVideosPACP_In.request/vp:items/vp:header/vp:Up_Grade_To_Invert</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:downElevation</from>
+                                        <to expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">$putVideosPACP_In.request/vp:items/vp:header/vp:Down_Elevation</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:downGradeToInvert</from>
+                                        <to expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">$putVideosPACP_In.request/vp:items/vp:header/vp:Down_Grade_To_Invert</to>
+                                      </copy>
+                                    </assign>
+                                    <assign name="CleanPACPRequest">
+                                      <copy>
+                                        <from>ora:processXSLT('xsl/StripNilElements.xsl', $putVideosPACP_In.request)</from>
+                                        <to>$putVideosPACP_In.request</to>
+                                      </copy>
+                                    </assign>
+                                    <invoke name="InvokePutVideosPACP" partnerLink="SewerAIVideos"
+                                            portType="vid:SewerAIVideos_ptt" operation="putVideosLACP"
+                                            inputVariable="putVideosPACP_In"
+                                            xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
+                                            bpelx:invokeAsDetail="yes">
+                                      <bpelx:toProperties>
+                                        <bpelx:toProperty name="rest.binding.http.Authorization" variable="vAuth"/>
+                                        <bpelx:toProperty name="rest.binding.http.Content-Type" variable="vCT"/>
+                                        <bpelx:toProperty name="rest.binding.http.Accept" variable="vAccept"/>
+                                        <bpelx:toProperty name="rest.binding.responseType" variable="vRespType"/>
+                                      </bpelx:toProperties>
+                                      <bpelx:fromProperties>
+                                        <bpelx:fromProperty name="rest.binding.http.statusCode"
+                                                            variable="vPutVideosStatusCode"/>
+                                      </bpelx:fromProperties>
+                                    </invoke>
+                                  </sequence>
+                                </elseif>
+                                <else>
+                                  <sequence>
+                                    <assign name="MarkUnknownType" bpelx:insertMissingToData="yes"
+                                            xmlns:bpelx="http://schemas.oracle.com/bpel/extension">
+                                      <copy>
+                                        <from>'ERROR'</from>
+                                        <to>$vFeedStatus</to>
+                                      </copy>
+                                      <copy>
+                                        <from>
+                          concat('Unknown inspectionType: ',normalize-space(string($InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:inspectionType)))
+                        </from>
+                                        <to>$vFeedMessage</to>
+                                      </copy>
+                                    </assign>
+                                  </sequence>
+                                </else>
+                              </if>
+                            </sequence>
+                          </scope>
+                          <!-- 3.E Update feedStatus (FOR CURRENT ROW) -->
+                          <assign name="BuildUpdateCRInspectStatus"
+                                  xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
+                                  bpelx:insertMissingToData="yes">
+                            <!-- Skeleton at part root -->
+                            <!-- Populate the values (text nodes) for THIS row -->
+                            <copy>
+                              <from><literal xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"><topUCS:EpseweraiCrInspectCollection xmlns:topUCS="http://xmlns.oracle.com/pcbpel/adapter/db/top/UpdateCRInspectStatus">
+                        <topUCS:EpseweraiCrInspect>
+                          <topUCS:projectSid/>
+                          <topUCS:inspectionid/>
+                          <topUCS:feedStatus/>
+                        </topUCS:EpseweraiCrInspect>
+                      </topUCS:EpseweraiCrInspectCollection></literal></from>
+                              <to>$UpdateCRInspectStatus_In.EpseweraiCrInspectCollection</to>
+                            </copy>
+                            <copy>
+                              <from expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">
+                                xp20:upper-case(translate(normalize-space(string($InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:projectSid)),'-', ''))
+                              </from>
+                              <to>$UpdateCRInspectStatus_In.EpseweraiCrInspectCollection/topUCS:EpseweraiCrInspect/topUCS:projectSid</to>
+                            </copy>
+                            <copy>
+                              <from expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">
+                                xp20:upper-case(translate(normalize-space(string($InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:inspectionid)),'-', ''))
+                              </from>
+                              <to>$UpdateCRInspectStatus_In.EpseweraiCrInspectCollection/topUCS:EpseweraiCrInspect/topUCS:inspectionid</to>
+                            </copy>
+                            <copy>
+                              <from>'SENT'</from>
+                              <to>$UpdateCRInspectStatus_In.EpseweraiCrInspectCollection/topUCS:EpseweraiCrInspect/topUCS:feedStatus</to>
+                            </copy>
+                          </assign>
+                          <extensionActivity>
+                            <bpelx:exec name="HexToRawForUpdate">
+                              <![CDATA[
+                              try {
+                                // 1) Read current element values as DOM nodes, then get text
+                                org.w3c.dom.Node projNode = (org.w3c.dom.Node)getVariableData(
+                                  "UpdateCRInspectStatus_In",
+                                  "EpseweraiCrInspectCollection",
+                                  "/topUCS:EpseweraiCrInspectCollection/topUCS:EpseweraiCrInspect/topUCS:projectSid"
+                                );
+                                org.w3c.dom.Node inspNode = (org.w3c.dom.Node)getVariableData(
+                                  "UpdateCRInspectStatus_In",
+                                  "EpseweraiCrInspectCollection",
+                                  "/topUCS:EpseweraiCrInspectCollection/topUCS:EpseweraiCrInspect/topUCS:inspectionid"
+                                );
+                          
+                                String projText = (projNode == null ? null : projNode.getTextContent());
+                                String inspText = (inspNode == null ? null : inspNode.getTextContent());
+                          
+                                // 2) Normalize (trim + remove hyphens)
+                                if (projText != null) projText = projText.trim().replace("-", "");
+                                if (inspText != null) inspText = inspText.trim().replace("-", "");
+                          
+                                // 3) Validate (RAW(16) => 32 hex chars)
+                                if (projText == null || projText.length() != 32 ||
+                                    inspText == null || inspText.length() != 32) {
+                                  addAuditTrailEntry("HexToRawForUpdate: invalid hex: proj=" + projText + ", insp=" + inspText);
+                                  throw new RuntimeException("Invalid RAW(16) hex value.");
+                                }
+                          
+                                // 4) Convert hex → 16 bytes (inline; no method declarations in Java Embedding)
+                                byte[] projBytes = new byte[16];
+                                byte[] inspBytes = new byte[16];
+                                for (int i = 0; i < 16; i++) {
+                                  int hi = Character.digit(projText.charAt(2*i), 16);
+                                  int lo = Character.digit(projText.charAt(2*i+1), 16);
+                                  if (hi < 0 || lo < 0) throw new RuntimeException("Non-hex in projectSid at pos " + (2*i));
+                                  projBytes[i] = (byte)((hi << 4) + lo);
+                          
+                                  hi = Character.digit(inspText.charAt(2*i), 16);
+                                  lo = Character.digit(inspText.charAt(2*i+1), 16);
+                                  if (hi < 0 || lo < 0) throw new RuntimeException("Non-hex in inspectionid at pos " + (2*i));
+                                  inspBytes[i] = (byte)((hi << 4) + lo);
+                                }
+                          
+                                // 5) Base64 encode (SOA serializes byte[] as base64Binary in XML)
+                                String projB64 = java.util.Base64.getEncoder().encodeToString(projBytes);
+                                String inspB64 = java.util.Base64.getEncoder().encodeToString(inspBytes);
+                                addAuditTrailEntry("HexToRawForUpdate: projB64.len=" + projB64.length() +
+                                                   ", inspB64.len=" + inspB64.length());
+                          
+                                // 6) Write back into the message (the adapter will bind these as RAW)
+                                setVariableData(
+                                  "UpdateCRInspectStatus_In",
+                                  "EpseweraiCrInspectCollection",
+                                  "/topUCS:EpseweraiCrInspectCollection/topUCS:EpseweraiCrInspect/topUCS:projectSid",
+                                  projB64
+                                );
+                                setVariableData(
+                                  "UpdateCRInspectStatus_In",
+                                  "EpseweraiCrInspectCollection",
+                                  "/topUCS:EpseweraiCrInspectCollection/topUCS:EpseweraiCrInspect/topUCS:inspectionid",
+                                  inspB64
+                                );
+                          
+                                addAuditTrailEntry("HexToRawForUpdate: keys converted to base64Binary for RAW(16).");
+                              } catch (Throwable t) {
+                                addAuditTrailEntry("HexToRawForUpdate ERROR: " + t.getMessage());
+                                throw new RuntimeException(t);
+                              }
+                            ]]>
+                            </bpelx:exec>
+                          </extensionActivity>
+                          <!-- Now actually call the DB adapter -->
+                          <invoke name="InvokeUpdateCRInspectStatus" partnerLink="UpdateCRInspectStatus"
+                                  portType="uc:UpdateCRInspectStatus_ptt" operation="update"
+                                  inputVariable="UpdateCRInspectStatus_In"
+                                  xmlns:bpelx="http://schemas.oracle.com/bpel/extension" bpelx:invokeAsDetail="yes"/>
+                        </sequence>
+                      </if>
+                    </sequence>
+                  </scope>
+                </forEach>
+              </sequence>
+              <else>
+                <sequence>
+                  <extensionActivity>
+                    <bpelx:exec name="LogNoRows" xmlns:bpelx="http://schemas.oracle.com/bpel/extension">
+                      <![CDATA[
+                      addAuditTrailEntry("SendVideos: no rows to process.");
+                    ]]>
+                    </bpelx:exec>
+                  </extensionActivity>
+                </sequence>
+              </else>
+            </if>
+          </sequence>
+          <!-- closes SendVideosScope sequence -->
+        </scope>
+        <!-- closes SendVideosScope -->
+      </sequence>
+      <!-- closes EncodeAndInvoke sequence -->
+    </scope>
+    <!-- closes EncodeAndInvoke scope -->
+  </sequence>
+  <!-- closes Main sequence -->
+</process>
+<!-- closes process -->
