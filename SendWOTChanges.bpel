@@ -1,68 +1,22 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<process name="SendWOTChanges" targetNamespace="http://xmlns.oracle.com/Ivara12c/IvaraToSewerAI/SendWOTChanges"
-         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
-         xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-         xmlns:fw="http://xmlns.oracle.com/pcbpel/adapter/file/Ivara12c/IvaraToSewerAI/ExportWOTUpdate_sp"
-         xmlns:rw="http://xmlns.oracle.com/pcbpel/adapter/db/Ivara12c/IvaraToSewerAI/ReadWOTSewerAIData"
-         xmlns:tnsRead="http://xmlns.oracle.com/pcbpel/adapter/db/Ivara12c/IvaraToSewerAI/ReadWOTSewerAIData"
-         xmlns:tnsUpdate="http://xmlns.oracle.com/pcbpel/adapter/db/Ivara12c/IvaraToSewerAI/UpdateWOTSewerAIData"
-         xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/ReadWOTSewerAIData"
-         xmlns:opaque="http://xmlns.oracle.com/pcbpel/adapter/opaque/" suppressJoinFailure="yes"
-         xmlns:ui="http://xmlns.oracle.com/soa/designer"
-         xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/db/Ivara12c/IvaraToSewerAI/UpdateWOTSewerAIData"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns:ns2="http://xmlns.oracle.com/pcbpel/adapter/db/top/UpdateWOTSewerAIData"
-         xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc"
-         xmlns:bpm="http://xmlns.oracle.com/bpmn20/extensions"
-         xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20"
-         xmlns:ess="http://xmlns.oracle.com/scheduler" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath"
-         xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions"
-         xmlns:ora="http://schemas.oracle.com/xpath/extension"
-         xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue"
-         xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
-         xmlns:xdk="http://schemas.oracle.com/bpel/extension/xpath/function/xdk"
-         xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath"
-         xmlns:bpel2="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
-         xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap"
-         xmlns:ns3="http://xmlns.oracle.com/Ivara12c/IvaraToSewerAI/SewerAIProjects"
-         xmlns:ns4="http://TargetNamespace.com/SewerAIProjects_putProjects_request"
-         xmlns:rc="http://xmlns.oracle.com/pcbpel/adapter/db/Ivara12c/IvaraToSewerAI/ReadCRInspect"
-         xmlns:uc="http://xmlns.oracle.com/pcbpel/adapter/db/Ivara12c/IvaraToSewerAI/UpdateCRInspectStatus"
-         xmlns:vid="http://xmlns.oracle.com/Ivara12c/IvaraToSewerAI/SewerAIVideos"
-         xmlns:vl="http://TargetNamespace.com/SewerAIProjects_putVideosLACP_request"
-         xmlns:vm="http://TargetNamespace.com/SewerAIProjects_putVideosMACP_request"
-         xmlns:vp="http://TargetNamespace.com/SewerAIProjects_putVideosPACP_request"
-         xmlns:fw2="http://xmlns.oracle.com/pcbpel/adapter/file/Ivara12c/IvaraToSewerAI/ExportInspectUpdate_sp"
-         xmlns:topCRI="http://xmlns.oracle.com/pcbpel/adapter/db/top/ReadCRInspect"
-         xmlns:topUCS="http://xmlns.oracle.com/pcbpel/adapter/db/top/UpdateCRInspectStatus">
+<?xml version='1.0' encoding='UTF-8'?>
+<process xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fw="http://xmlns.oracle.com/pcbpel/adapter/file/Ivara12c/IvaraToSewerAI/ExportWOTUpdate_sp" xmlns:rw="http://xmlns.oracle.com/pcbpel/adapter/db/Ivara12c/IvaraToSewerAI/ReadWOTSewerAIData" xmlns:tnsRead="http://xmlns.oracle.com/pcbpel/adapter/db/Ivara12c/IvaraToSewerAI/ReadWOTSewerAIData" xmlns:tnsUpdate="http://xmlns.oracle.com/pcbpel/adapter/db/Ivara12c/IvaraToSewerAI/UpdateWOTSewerAIData" xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/ReadWOTSewerAIData" xmlns:opaque="http://xmlns.oracle.com/pcbpel/adapter/opaque/" xmlns:ui="http://xmlns.oracle.com/soa/designer" xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/db/Ivara12c/IvaraToSewerAI/UpdateWOTSewerAIData" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns2="http://xmlns.oracle.com/pcbpel/adapter/db/top/UpdateWOTSewerAIData" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:bpm="http://xmlns.oracle.com/bpmn20/extensions" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ess="http://xmlns.oracle.com/scheduler" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xdk="http://schemas.oracle.com/bpel/extension/xpath/function/xdk" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:bpel2="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:ns3="http://xmlns.oracle.com/Ivara12c/IvaraToSewerAI/SewerAIProjects" xmlns:ns4="http://TargetNamespace.com/SewerAIProjects_putProjects_request" xmlns:rc="http://xmlns.oracle.com/pcbpel/adapter/db/Ivara12c/IvaraToSewerAI/ReadCRInspect" xmlns:uc="http://xmlns.oracle.com/pcbpel/adapter/db/Ivara12c/IvaraToSewerAI/UpdateCRInspectStatus" xmlns:vid="http://xmlns.oracle.com/Ivara12c/IvaraToSewerAI/SewerAIVideos" xmlns:vl="http://TargetNamespace.com/SewerAIProjects_putVideosLACP_request" xmlns:vm="http://TargetNamespace.com/SewerAIProjects_putVideosMACP_request" xmlns:vp="http://TargetNamespace.com/SewerAIProjects_putVideosPACP_request" xmlns:fw2="http://xmlns.oracle.com/pcbpel/adapter/file/Ivara12c/IvaraToSewerAI/ExportInspectUpdate_sp" xmlns:topCRI="http://xmlns.oracle.com/pcbpel/adapter/db/top/ReadCRInspect" xmlns:topUCS="http://xmlns.oracle.com/pcbpel/adapter/db/top/UpdateCRInspectStatus" name="SendWOTChanges" targetNamespace="http://xmlns.oracle.com/Ivara12c/IvaraToSewerAI/SendWOTChanges" suppressJoinFailure="yes">
   <!-- Imports -->
-  <import importType="http://schemas.xmlsoap.org/wsdl/" location="../WSDLs/ReadWOTSewerAIData.wsdl"
-          namespace="http://xmlns.oracle.com/pcbpel/adapter/db/Ivara12c/IvaraToSewerAI/ReadWOTSewerAIData"
-          ui:processWSDL="true"/>
-  <import importType="http://schemas.xmlsoap.org/wsdl/" location="../WSDLs/UpdateWOTSewerAIData.wsdl"
-          namespace="http://xmlns.oracle.com/pcbpel/adapter/db/Ivara12c/IvaraToSewerAI/UpdateWOTSewerAIData"/>
-  <import importType="http://schemas.xmlsoap.org/wsdl/" location="../WSDLs/ExportWOTUpdate_sp.wsdl"
-          namespace="http://xmlns.oracle.com/pcbpel/adapter/file/Ivara12c/IvaraToSewerAI/ExportWOTUpdate_sp"/>
-  <import importType="http://www.w3.org/2001/XMLSchema" location="../Schemas/SewerAIProjects.xsd"
-          namespace="http://TargetNamespace.com/SewerAIProjects_putProjects_request"/>
+  <import importType="http://schemas.xmlsoap.org/wsdl/" location="../WSDLs/ReadWOTSewerAIData.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/Ivara12c/IvaraToSewerAI/ReadWOTSewerAIData" ui:processWSDL="true"/>
+  <import importType="http://schemas.xmlsoap.org/wsdl/" location="../WSDLs/UpdateWOTSewerAIData.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/Ivara12c/IvaraToSewerAI/UpdateWOTSewerAIData"/>
+  <import importType="http://schemas.xmlsoap.org/wsdl/" location="../WSDLs/ExportWOTUpdate_sp.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/file/Ivara12c/IvaraToSewerAI/ExportWOTUpdate_sp"/>
+  <import importType="http://www.w3.org/2001/XMLSchema" location="../Schemas/SewerAIProjects.xsd" namespace="http://TargetNamespace.com/SewerAIProjects_putProjects_request"/>
   <!-- New: DB Read (CR_INSPECT) -->
-  <import importType="http://schemas.xmlsoap.org/wsdl/" location="../WSDLs/ReadCRInspect.wsdl"
-          namespace="http://xmlns.oracle.com/pcbpel/adapter/db/Ivara12c/IvaraToSewerAI/ReadCRInspect"/>
+  <import importType="http://schemas.xmlsoap.org/wsdl/" location="../WSDLs/ReadCRInspect.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/Ivara12c/IvaraToSewerAI/ReadCRInspect"/>
   <!-- New: DB Update (CR_INSPECT status) -->
-  <import importType="http://schemas.xmlsoap.org/wsdl/" location="../WSDLs/UpdateCRInspectStatus.wsdl"
-          namespace="http://xmlns.oracle.com/pcbpel/adapter/db/Ivara12c/IvaraToSewerAI/UpdateCRInspectStatus"/>
+  <import importType="http://schemas.xmlsoap.org/wsdl/" location="../WSDLs/UpdateCRInspectStatus.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/Ivara12c/IvaraToSewerAI/UpdateCRInspectStatus"/>
   <!-- New: REST (videos) -->
-  <import importType="http://schemas.xmlsoap.org/wsdl/" location="../WSDLs/SewerAIVideos.wsdl"
-          namespace="http://xmlns.oracle.com/Ivara12c/IvaraToSewerAI/SewerAIVideos"/>
-  <import importType="http://schemas.xmlsoap.org/wsdl/" location="../WSDLs/ExportInspectUpdate_sp.wsdl"
-          namespace="http://xmlns.oracle.com/pcbpel/adapter/file/Ivara12c/IvaraToSewerAI/ExportInspectUpdate_sp"/>
+  <import importType="http://schemas.xmlsoap.org/wsdl/" location="../WSDLs/SewerAIVideos.wsdl" namespace="http://xmlns.oracle.com/Ivara12c/IvaraToSewerAI/SewerAIVideos"/>
+  <import importType="http://schemas.xmlsoap.org/wsdl/" location="../WSDLs/ExportInspectUpdate_sp.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/file/Ivara12c/IvaraToSewerAI/ExportInspectUpdate_sp"/>
   <!-- Partner links -->
   <partnerLinks>
-    <partnerLink name="ReadWOTSewerAIData" partnerLinkType="rw:ReadWOTSewerAIData_plt"
-                 myRole="ReadWOTSewerAIData_role"/>
+    <partnerLink name="ReadWOTSewerAIData" partnerLinkType="rw:ReadWOTSewerAIData_plt" myRole="ReadWOTSewerAIData_role"/>
     <partnerLink name="ExportWOTUpdate_sp" partnerLinkType="fw:Write_plt" partnerRole="Write_role"/>
-    <partnerLink name="UpdateWOTSewerAIData" partnerLinkType="ns1:UpdateWOTSewerAIData_plt"
-                 partnerRole="UpdateWOTSewerAIData_role"/>
+    <partnerLink name="UpdateWOTSewerAIData" partnerLinkType="ns1:UpdateWOTSewerAIData_plt" partnerRole="UpdateWOTSewerAIData_role"/>
     <partnerLink name="SewerAIProjects" partnerLinkType="ns3:SewerAIProjects" partnerRole="SewerAIProjectsProvider"/>
     <!-- New: Read rows from CUSTOMERDATA.EPSEWERAI_CR_INSPECT -->
     <!-- New: Update status in CUSTOMERDATA.EPSEWERAI_CR_INSPECT -->
@@ -70,8 +24,7 @@
     <partnerLink name="SewerAIVideos" partnerLinkType="vid:SewerAIVideos" partnerRole="SewerAIVideosProvider"/>
     <partnerLink name="ReadCRInspect" partnerLinkType="rc:ReadCRInspect_plt" partnerRole="ReadCRInspect_role"/>
     <partnerLink name="ExportInspectUpdate_sp" partnerLinkType="fw2:Write_plt" partnerRole="Write_role"/>
-    <partnerLink name="UpdateCRInspectStatus" partnerLinkType="uc:UpdateCRInspectStatus_plt"
-                 partnerRole="UpdateCRInspectStatus_role"/>
+    <partnerLink name="UpdateCRInspectStatus" partnerLinkType="uc:UpdateCRInspectStatus_plt" partnerRole="UpdateCRInspectStatus_role"/>
   </partnerLinks>
   <!-- Variables -->
   <variables>
@@ -83,7 +36,7 @@
     <variable name="InvokeUpdateFeedStatus_update_InputVariable" messageType="ns1:EpseweraiWotStg1Collection_msg"/>
     <variable name="vPutProjectsReq" messageType="ns3:putProjects_inputMessage"/>
     <!-- Working strings -->
-    <variable name="vProjectSid" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+    <variable xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="vProjectSid" type="xsd:string"/>
     <!-- <variable name="varHttpHeaders" type="xsd:string"/>  -->
     <!-- HTTP header variables for REST invoke -->
     <variable name="vAuth" type="xsd:string"/>
@@ -97,10 +50,8 @@
     <variable name="vDueDateISO" type="xsd:string"/>
     <variable name="vHeadersJson" type="xsd:string"/>
     <!-- ===== Variables for InvokeReadCRInspect (created automatically if you use the wizard) ===== -->
-    <variable name="InvokeReadCRInspect_ReadCRInspectSelect_InputVariable"
-              messageType="rc:ReadCRInspectSelect_inputParameters"/>
-    <variable name="InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable"
-              messageType="rc:VCrInspectToSendCollection_msg"/>
+    <variable name="InvokeReadCRInspect_ReadCRInspectSelect_InputVariable" messageType="rc:ReadCRInspectSelect_inputParameters"/>
+    <variable name="InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable" messageType="rc:VCrInspectToSendCollection_msg"/>
     <!-- REST input messages -->
     <variable name="putVideosLACP_In" messageType="vid:putVideosLACP_inputMessage"/>
     <variable name="putVideosMACP_In" messageType="vid:putVideosMACP_inputMessage"/>
@@ -117,15 +68,14 @@
   </variables>
   <sequence name="Main">
     <!-- Create instance on DB poll -->
-    <receive name="receiveFromDB" partnerLink="ReadWOTSewerAIData" portType="rw:ReadWOTSewerAIData_ptt"
-             operation="receive" variable="inputVariableWOT" createInstance="yes"/>
+    <receive name="receiveFromDB" partnerLink="ReadWOTSewerAIData" portType="rw:ReadWOTSewerAIData_ptt" operation="receive" variable="inputVariableWOT" createInstance="yes"/>
     <scope name="EncodeAndInvoke">
       <faultHandlers>
         <catchAll>
           <sequence>
             <extensionActivity>
               <bpelx:exec name="captureErrorLog">
-                <![CDATA[addAuditTrailEntry("EncodeAndInvoke scope caught a fault.");]]>
+                addAuditTrailEntry("EncodeAndInvoke scope caught a fault.");
               </bpelx:exec>
             </extensionActivity>
           </sequence>
@@ -135,7 +85,7 @@
         <!-- Build JSON from DB row and Base64-encode for FILE + REST (OPAQUE) -->
         <extensionActivity>
           <bpelx:exec name="EncodeAndSetOpaquePayload">
-            <![CDATA[addAuditTrailEntry("EncodeAndSetOpaquePayload (SewerAI payload; date mappings applied) started.");         
+            addAuditTrailEntry("EncodeAndSetOpaquePayload (SewerAI payload; date mappings applied) started.");         
 try {     
     // ====== CONSTANTS ======     
     final String ACCOUNT_SID           = "a2edc3a7-82b9-4a9f-ba61-09a58590dfb0";     
@@ -171,19 +121,19 @@ try {
     org.w3c.dom.NodeList nl;     
      
     nl = row.getElementsByTagNameNS(NS, "wotasktitle");     
-    if (nl != null && nl.getLength() > 0)     
+    if (nl != null &amp;&amp; nl.getLength() &gt; 0)     
         wotasktitle = nl.item(0).getTextContent();     
      
     nl = row.getElementsByTagNameNS(NS, "plndstrtdateDttm");     
-    if (nl != null && nl.getLength() > 0)     
+    if (nl != null &amp;&amp; nl.getLength() &gt; 0)     
         plndstrtdate = nl.item(0).getTextContent();     
      
     nl = row.getElementsByTagNameNS(NS, "plndcompdateDttm");     
-    if (nl != null && nl.getLength() > 0)     
+    if (nl != null &amp;&amp; nl.getLength() &gt; 0)     
         plndcompdate = nl.item(0).getTextContent();     
      
     nl = row.getElementsByTagNameNS(NS, "taskUuid");     
-    if (nl != null && nl.getLength() > 0)     
+    if (nl != null &amp;&amp; nl.getLength() &gt; 0)     
         taskUuidText = nl.item(0).getTextContent().trim();     
      
     // ====== CONVERT RAW / BASE64 / HEX taskUuid → UUID ======     
@@ -195,7 +145,7 @@ try {
      
         if (looksLikeBase64) {     
             byte[] bytes = java.util.Base64.getDecoder().decode(taskUuidText);     
-            if (bytes != null && bytes.length == 16) {     
+            if (bytes != null &amp;&amp; bytes.length == 16) {     
                 StringBuilder hex = new StringBuilder(32);     
                 for (byte b : bytes)     
                     hex.append(String.format("%02x", b));     
@@ -210,7 +160,7 @@ try {
                 projectSid = taskUuidText;     
             }     
         }     
-        else if (taskUuidText.length() == 32 &&     
+        else if (taskUuidText.length() == 32 &amp;&amp;     
                  taskUuidText.matches("^[0-9A-Fa-f]{32}$")) {     
             String h = taskUuidText.toLowerCase();     
             projectSid =     
@@ -238,14 +188,14 @@ try {
     java.time.format.DateTimeFormatter FMT =     
         java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;     
      
-    java.util.function.Function<String,String> normalize =     
-        (raw) -> {     
+    java.util.function.Function&lt;String,String&gt; normalize =     
+        (raw) -&gt; {     
             if (raw == null || raw.trim().isEmpty())     
                 return FMT.format(now);     
             try { return java.time.OffsetDateTime.parse(raw).format(FMT); }     
             catch (Throwable ignore) {}     
             try {     
-                String s = raw.contains(" ") && !raw.contains("T")     
+                String s = raw.contains(" ") &amp;&amp; !raw.contains("T")     
                     ? raw.replace(' ', 'T') : raw;     
                 return java.time.LocalDateTime.parse(s)     
                     .atOffset(java.time.ZoneOffset.UTC)     
@@ -330,12 +280,11 @@ try {
 } catch (Throwable t) {     
     addAuditTrailEntry("Error in Java Embedding: " + t.getMessage());     
     throw new RuntimeException(t);     
-}]]>
+}
           </bpelx:exec>
         </extensionActivity>
         <!-- Write the JSON file (unchanged) -->
-        <invoke name="writeOpaque" partnerLink="ExportWOTUpdate_sp" portType="fw:Write_ptt" operation="Write"
-                inputVariable="fileWriteRequest" bpelx:invokeAsDetail="yes"/>
+        <invoke name="writeOpaque" partnerLink="ExportWOTUpdate_sp" portType="fw:Write_ptt" operation="Write" inputVariable="fileWriteRequest" bpelx:invokeAsDetail="yes"/>
         <assign name="BuildHeadersJson" bpelx:insertMissingToData="yes">
           <copy>
             <from expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">concat('{"Authorization":"', $vAuth, '","Content-Type":"', $vCT, '"}')</from>
@@ -445,16 +394,14 @@ try {
           </copy>
         </assign>
         <!-- Invoke the REST endpoint -->
-        <invoke name="InvokePutProjects" partnerLink="SewerAIProjects" portType="ns3:SewerAIProjects_ptt"
-                operation="putProjects" inputVariable="vPutProjectsReq" bpelx:invokeAsDetail="yes">
+        <invoke name="InvokePutProjects" partnerLink="SewerAIProjects" portType="ns3:SewerAIProjects_ptt" operation="putProjects" inputVariable="vPutProjectsReq" bpelx:invokeAsDetail="yes">
           <bpelx:toProperties>
             <bpelx:toProperty name="rest.binding.http.Authorization" variable="vAuth"/>
             <bpelx:toProperty name="rest.binding.responseType" variable="vRespType"/>
           </bpelx:toProperties>
         </invoke>
         <!-- Mark the DB row as SENT (keep your existing AssignStatus + DB invoke here) -->
-        <assign name="AssignStatus" xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
-                bpelx:ignoreMissingFromData="yes" bpelx:insertMissingToData="yes">
+        <assign xmlns:bpelx="http://schemas.oracle.com/bpel/extension" name="AssignStatus" bpelx:ignoreMissingFromData="yes" bpelx:insertMissingToData="yes">
           <!-- Copy taskUuid from inbound (Read) to update (Update) request -->
           <!-- Set feedStatus = 'SENT' in the update request -->
           <copy>
@@ -467,20 +414,14 @@ try {
             <to>$InvokeUpdateFeedStatus_update_InputVariable.EpseweraiWotStg1Collection/ns2:EpseweraiWotStg1/ns2:feedStatus</to>
           </copy>
         </assign>
-        <invoke name="InvokeUpdateFeedStatus" bpelx:invokeAsDetail="yes" partnerLink="UpdateWOTSewerAIData"
-                portType="ns1:UpdateWOTSewerAIData_ptt" operation="update"
-                inputVariable="InvokeUpdateFeedStatus_update_InputVariable"/>
+        <invoke name="InvokeUpdateFeedStatus" bpelx:invokeAsDetail="yes" partnerLink="UpdateWOTSewerAIData" portType="ns1:UpdateWOTSewerAIData_ptt" operation="update" inputVariable="InvokeUpdateFeedStatus_update_InputVariable"/>
         <!-- ========================= -->
         <!-- SendVideos scope (complete) -->
         <!-- ========================= -->
         <scope name="SendVideosScope">
           <sequence>
             <!-- 1) Read rows NEW/UPDATED from CUSTOMERDATA.EPSEWERAI_CR_INSPECT -->
-            <invoke name="InvokeReadCRInspect" partnerLink="ReadCRInspect" portType="rc:ReadCRInspect_ptt"
-                    operation="ReadCRInspectSelect"
-                    inputVariable="InvokeReadCRInspect_ReadCRInspectSelect_InputVariable"
-                    outputVariable="InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable"
-                    xmlns:bpelx="http://schemas.oracle.com/bpel/extension" bpelx:invokeAsDetail="yes"/>
+            <invoke xmlns:bpelx="http://schemas.oracle.com/bpel/extension" name="InvokeReadCRInspect" partnerLink="ReadCRInspect" portType="rc:ReadCRInspect_ptt" operation="ReadCRInspectSelect" inputVariable="InvokeReadCRInspect_ReadCRInspectSelect_InputVariable" outputVariable="InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable" bpelx:invokeAsDetail="yes"/>
             <assign name="SetInspectRowCount">
               <copy>
                 <from>count($InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(string(topCRI:projectSid))=normalize-space(string($vProjectSid))])</from>
@@ -500,8 +441,7 @@ try {
                     <faultHandlers>
                       <catchAll>
                         <sequence>
-                          <assign name="MarkErrorOnFault" bpelx:insertMissingToData="yes"
-                                  xmlns:bpelx="http://schemas.oracle.com/bpel/extension">
+                          <assign xmlns:bpelx="http://schemas.oracle.com/bpel/extension" name="MarkErrorOnFault" bpelx:insertMissingToData="yes">
                             <copy>
                               <from>'ERROR'</from>
                               <to>$vFeedStatus</to>
@@ -522,9 +462,7 @@ try {
                          
                  <!-- 3.A Build JSON  -->
 
-                  <assign name="BuildInspectJson" bpelx:insertMissingToData="yes"
-                          xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
-                          bpelx:ignoreMissingFromData="yes">
+                  <assign xmlns:bpelx="http://schemas.oracle.com/bpel/extension" name="BuildInspectJson" bpelx:insertMissingToData="yes" bpelx:ignoreMissingFromData="yes">
                     <copy>
                       <from expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">concat(
                         '{',
@@ -538,7 +476,8 @@ try {
                               '"Surveyed_By":"",',
                               '"Certificate_Number":"",',
                               '"Material":"', normalize-space(string($InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:material)),'",',
-                              '"Additional_Info":"', normalize-space(translate(translate(string($InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:additionalInfo), '\"', ''), '&#x0D;&#x0A;', '  ')),'",',
+                              '"Additional_Info":"', normalize-space(translate(translate(string($InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:additionalInfo), '\"', ''), '&#13;
+', '  ')),'",',
                               '"Inspection_Status":"",',
                               '"Upstream_MH":"', normalize-space(string($InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:upstreamMh)),'",',
                               '"Downstream_MH":"', normalize-space(string($InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:downstreamMh)),'",',
@@ -582,7 +521,7 @@ try {
                  <!-- 3.B Build opaque + set per-file name, then write JSON to disk -->
                   <extensionActivity>
                     <bpelx:exec name="SetInspectOpaque">
-                              <![CDATA[try { 
+                              try { 
                     String json = (String)getVariableData("vInspectJson"); 
                     if (json == null) json = "{}"; 
                     String base64 = java.util.Base64.getEncoder().encodeToString(json.getBytes("UTF-8")); 
@@ -590,26 +529,22 @@ try {
                   } catch (Throwable t) { 
                     addAuditTrailEntry("SetInspectOpaque error: " + t.getMessage()); 
                     throw new RuntimeException(t); 
-                  }]]>
+                  }
                             </bpelx:exec>
                           </extensionActivity>
-                          <assign name="SetOutFileName" bpelx:insertMissingToData="yes"
-                                  xmlns:bpelx="http://schemas.oracle.com/bpel/extension">
+                          <assign xmlns:bpelx="http://schemas.oracle.com/bpel/extension" name="SetOutFileName" bpelx:insertMissingToData="yes">
                             <copy>
                               <from>concat('inspect_', $vProjectSid, '_',normalize-space(string($InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:inspectionid)),'.json')</from>
                               <to>$vOutFileName</to>
                             </copy>
                           </assign>
-                          <invoke name="WriteInspectJson" partnerLink="ExportInspectUpdate_sp" portType="fw2:Write_ptt"
-                                  operation="Write" inputVariable="fileInspectWriteRequest"
-                                  xmlns:bpelx="http://schemas.oracle.com/bpel/extension" bpelx:invokeAsDetail="yes">
+                          <invoke xmlns:bpelx="http://schemas.oracle.com/bpel/extension" name="WriteInspectJson" partnerLink="ExportInspectUpdate_sp" portType="fw2:Write_ptt" operation="Write" inputVariable="fileInspectWriteRequest" bpelx:invokeAsDetail="yes">
                             <bpelx:toProperties>
                               <bpelx:toProperty name="jca.file.FileName" variable="vOutFileName"/>
                             </bpelx:toProperties>
                           </invoke>
                           <!-- 3.C Init per-row status -->
-                          <assign name="InitRowStatus" bpelx:insertMissingToData="yes"
-                                  xmlns:bpelx="http://schemas.oracle.com/bpel/extension">
+                          <assign xmlns:bpelx="http://schemas.oracle.com/bpel/extension" name="InitRowStatus" bpelx:insertMissingToData="yes">
                             <copy>
                               <from><literal xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">SENT</literal></from>
                               <to>$vFeedStatus</to>
@@ -659,8 +594,7 @@ try {
                               <if name="PickEndpointIf">
                                 <condition>normalize-space(string($InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:inspectionType)) = 'LACP'</condition>
                                 <sequence>
-                                  <assign name="BuildLACPRequest" xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
-                                          bpelx:insertMissingToData="yes" bpelx:ignoreMissingFromData="yes">
+                                  <assign xmlns:bpelx="http://schemas.oracle.com/bpel/extension" name="BuildLACPRequest" bpelx:insertMissingToData="yes" bpelx:ignoreMissingFromData="yes">
                                     <!-- 1) Seed the request with the correct wrapper at the PART ROOT -->
                                     <!-- 2) Map DB → LACP (CURRENT ROW: filtered[$i]) -->
                                     <copy>
@@ -745,11 +679,7 @@ try {
                                       <to>$putVideosLACP_In.request</to>
                                     </copy>
                                   </assign>
-                                  <invoke name="InvokePutVideosLACP" partnerLink="SewerAIVideos"
-                                          portType="vid:SewerAIVideos_ptt" operation="putVideosLACP"
-                                          inputVariable="putVideosLACP_In"
-                                          xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
-                                          bpelx:invokeAsDetail="yes">
+                                  <invoke xmlns:bpelx="http://schemas.oracle.com/bpel/extension" name="InvokePutVideosLACP" partnerLink="SewerAIVideos" portType="vid:SewerAIVideos_ptt" operation="putVideosLACP" inputVariable="putVideosLACP_In" bpelx:invokeAsDetail="yes">
                                     <bpelx:toProperties>
                                       <bpelx:toProperty name="rest.binding.http.Authorization" variable="vAuth"/>
                                       <bpelx:toProperty name="rest.binding.http.Content-Type" variable="vCT"/>
@@ -757,16 +687,14 @@ try {
                                       <bpelx:toProperty name="rest.binding.responseType" variable="vRespType"/>
                                     </bpelx:toProperties>
                                     <bpelx:fromProperties>
-                                      <bpelx:fromProperty name="rest.binding.http.statusCode"
-                                                          variable="vPutVideosStatusCode"/>
+                                      <bpelx:fromProperty name="rest.binding.http.statusCode" variable="vPutVideosStatusCode"/>
                                     </bpelx:fromProperties>
                                   </invoke>
                                 </sequence>
                                 <elseif>
                                   <condition>normalize-space(string($InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:inspectionType)) = 'MACP'</condition>
                                   <sequence>
-                                    <assign name="BuildMACPRequest" bpelx:insertMissingToData="yes"
-                                            xmlns:bpelx="http://schemas.oracle.com/bpel/extension" bpelx:ignoreMissingFromData="yes">
+                                    <assign xmlns:bpelx="http://schemas.oracle.com/bpel/extension" name="BuildMACPRequest" bpelx:insertMissingToData="yes" bpelx:ignoreMissingFromData="yes">
                                       <copy>
                                         <from><literal xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"><vm:VideosMACPRequest xmlns:vm="http://TargetNamespace.com/SewerAIProjects_putVideosMACP_request">
                                           <vm:items>
@@ -870,11 +798,7 @@ try {
                                         <to>$putVideosMACP_In.request</to>
                                       </copy>
                                     </assign>
-                                    <invoke name="InvokePutVideosMACP" partnerLink="SewerAIVideos"
-                                            portType="vid:SewerAIVideos_ptt" operation="putVideosMACP"
-                                            inputVariable="putVideosMACP_In"
-                                            xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
-                                            bpelx:invokeAsDetail="yes">
+                                    <invoke xmlns:bpelx="http://schemas.oracle.com/bpel/extension" name="InvokePutVideosMACP" partnerLink="SewerAIVideos" portType="vid:SewerAIVideos_ptt" operation="putVideosMACP" inputVariable="putVideosMACP_In" bpelx:invokeAsDetail="yes">
                                       <bpelx:toProperties>
                                         <bpelx:toProperty name="rest.binding.http.Authorization" variable="vAuth"/>
                                         <bpelx:toProperty name="rest.binding.http.Content-Type" variable="vCT"/>
@@ -882,8 +806,7 @@ try {
                                         <bpelx:toProperty name="rest.binding.responseType" variable="vRespType"/>
                                       </bpelx:toProperties>
                                       <bpelx:fromProperties>
-                                        <bpelx:fromProperty name="rest.binding.http.statusCode"
-                                                            variable="vPutVideosStatusCode"/>
+                                        <bpelx:fromProperty name="rest.binding.http.statusCode" variable="vPutVideosStatusCode"/>
                                       </bpelx:fromProperties>
                                     </invoke>
                                   </sequence>
@@ -891,8 +814,7 @@ try {
                                 <elseif>
                                   <condition>normalize-space(string($InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:inspectionType)) = 'PACP'</condition>
                                   <sequence>
-                                    <assign name="BuildPACPRequest" bpelx:insertMissingToData="yes"
-                                            xmlns:bpelx="http://schemas.oracle.com/bpel/extension" bpelx:ignoreMissingFromData="yes">
+                                    <assign xmlns:bpelx="http://schemas.oracle.com/bpel/extension" name="BuildPACPRequest" bpelx:insertMissingToData="yes" bpelx:ignoreMissingFromData="yes">
                                       <copy>
                                         <from><literal xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"><vp:VideosPACPRequest xmlns:vp="http://TargetNamespace.com/SewerAIProjects_putVideosPACP_request">
                                             <vp:items>
@@ -936,7 +858,7 @@ try {
                                         <to>$putVideosPACP_In.request/vp:items/vp:header/vp:InspectionID</to>
                                       </copy>
                                       <copy>
-                                        <from expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">string($InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:additionalInfo</from>
+                                        <from expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">string($InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:additionalInfo)</from>
                                         <to expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">$putVideosPACP_In.request/vp:items/vp:header/vp:Additional_Info</to>
                                       </copy>
                                       <copy>
@@ -1018,11 +940,7 @@ try {
                                         <to>$putVideosPACP_In.request</to>
                                       </copy>
                                     </assign>
-                                    <invoke name="InvokePutVideosPACP" partnerLink="SewerAIVideos"
-                                            portType="vid:SewerAIVideos_ptt" operation="putVideosLACP"
-                                            inputVariable="putVideosPACP_In"
-                                            xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
-                                            bpelx:invokeAsDetail="yes">
+                                    <invoke xmlns:bpelx="http://schemas.oracle.com/bpel/extension" name="InvokePutVideosPACP" partnerLink="SewerAIVideos" portType="vid:SewerAIVideos_ptt" operation="putVideosLACP" inputVariable="putVideosPACP_In" bpelx:invokeAsDetail="yes">
                                       <bpelx:toProperties>
                                         <bpelx:toProperty name="rest.binding.http.Authorization" variable="vAuth"/>
                                         <bpelx:toProperty name="rest.binding.http.Content-Type" variable="vCT"/>
@@ -1030,16 +948,14 @@ try {
                                         <bpelx:toProperty name="rest.binding.responseType" variable="vRespType"/>
                                       </bpelx:toProperties>
                                       <bpelx:fromProperties>
-                                        <bpelx:fromProperty name="rest.binding.http.statusCode"
-                                                            variable="vPutVideosStatusCode"/>
+                                        <bpelx:fromProperty name="rest.binding.http.statusCode" variable="vPutVideosStatusCode"/>
                                       </bpelx:fromProperties>
                                     </invoke>
                                   </sequence>
                                 </elseif>
                                 <else>
                                   <sequence>
-                                    <assign name="MarkUnknownType" bpelx:insertMissingToData="yes"
-                                            xmlns:bpelx="http://schemas.oracle.com/bpel/extension">
+                                    <assign xmlns:bpelx="http://schemas.oracle.com/bpel/extension" name="MarkUnknownType" bpelx:insertMissingToData="yes">
                                       <copy>
                                         <from>'ERROR'</from>
                                         <to>$vFeedStatus</to>
@@ -1057,9 +973,7 @@ try {
                             </sequence>
                           </scope>
                           <!-- 3.E Update feedStatus (FOR CURRENT ROW) -->
-                          <assign name="BuildUpdateCRInspectStatus"
-                                  xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
-                                  bpelx:insertMissingToData="yes">
+                          <assign xmlns:bpelx="http://schemas.oracle.com/bpel/extension" name="BuildUpdateCRInspectStatus" bpelx:insertMissingToData="yes">
                             <!-- Skeleton at part root -->
                             <!-- Populate the values (text nodes) for THIS row -->
                             <copy>
@@ -1091,7 +1005,7 @@ try {
                           </assign>
                           <extensionActivity>
                             <bpelx:exec name="HexToRawForUpdate">
-                              <![CDATA[
+                              
                               try {
                                 // 1) Read current element values as DOM nodes, then get text
                                 org.w3c.dom.Node projNode = (org.w3c.dom.Node)getVariableData(
@@ -1112,7 +1026,7 @@ try {
                                 if (projText != null) projText = projText.trim().replace("-", "");
                                 if (inspText != null) inspText = inspText.trim().replace("-", "");
                           
-                                // 3) Validate (RAW(16) => 32 hex chars)
+                                // 3) Validate (RAW(16) =&gt; 32 hex chars)
                                 if (projText == null || projText.length() != 32 ||
                                     inspText == null || inspText.length() != 32) {
                                   addAuditTrailEntry("HexToRawForUpdate: invalid hex: proj=" + projText + ", insp=" + inspText);
@@ -1122,16 +1036,16 @@ try {
                                 // 4) Convert hex → 16 bytes (inline; no method declarations in Java Embedding)
                                 byte[] projBytes = new byte[16];
                                 byte[] inspBytes = new byte[16];
-                                for (int i = 0; i < 16; i++) {
+                                for (int i = 0; i &lt; 16; i++) {
                                   int hi = Character.digit(projText.charAt(2*i), 16);
                                   int lo = Character.digit(projText.charAt(2*i+1), 16);
-                                  if (hi < 0 || lo < 0) throw new RuntimeException("Non-hex in projectSid at pos " + (2*i));
-                                  projBytes[i] = (byte)((hi << 4) + lo);
+                                  if (hi &lt; 0 || lo &lt; 0) throw new RuntimeException("Non-hex in projectSid at pos " + (2*i));
+                                  projBytes[i] = (byte)((hi &lt;&lt; 4) + lo);
                           
                                   hi = Character.digit(inspText.charAt(2*i), 16);
                                   lo = Character.digit(inspText.charAt(2*i+1), 16);
-                                  if (hi < 0 || lo < 0) throw new RuntimeException("Non-hex in inspectionid at pos " + (2*i));
-                                  inspBytes[i] = (byte)((hi << 4) + lo);
+                                  if (hi &lt; 0 || lo &lt; 0) throw new RuntimeException("Non-hex in inspectionid at pos " + (2*i));
+                                  inspBytes[i] = (byte)((hi &lt;&lt; 4) + lo);
                                 }
                           
                                 // 5) Base64 encode (SOA serializes byte[] as base64Binary in XML)
@@ -1159,14 +1073,11 @@ try {
                                 addAuditTrailEntry("HexToRawForUpdate ERROR: " + t.getMessage());
                                 throw new RuntimeException(t);
                               }
-                            ]]>
+                            
                             </bpelx:exec>
                           </extensionActivity>
                           <!-- Now actually call the DB adapter -->
-                          <invoke name="InvokeUpdateCRInspectStatus" partnerLink="UpdateCRInspectStatus"
-                                  portType="uc:UpdateCRInspectStatus_ptt" operation="update"
-                                  inputVariable="UpdateCRInspectStatus_In"
-                                  xmlns:bpelx="http://schemas.oracle.com/bpel/extension" bpelx:invokeAsDetail="yes"/>
+                          <invoke xmlns:bpelx="http://schemas.oracle.com/bpel/extension" name="InvokeUpdateCRInspectStatus" partnerLink="UpdateCRInspectStatus" portType="uc:UpdateCRInspectStatus_ptt" operation="update" inputVariable="UpdateCRInspectStatus_In" bpelx:invokeAsDetail="yes"/>
                         </sequence>
                       </if>
                     </sequence>
@@ -1176,10 +1087,10 @@ try {
               <else>
                 <sequence>
                   <extensionActivity>
-                    <bpelx:exec name="LogNoRows" xmlns:bpelx="http://schemas.oracle.com/bpel/extension">
-                      <![CDATA[
+                    <bpelx:exec xmlns:bpelx="http://schemas.oracle.com/bpel/extension" name="LogNoRows">
+                      
                       addAuditTrailEntry("SendVideos: no rows to process.");
-                    ]]>
+                    
                     </bpelx:exec>
                   </extensionActivity>
                 </sequence>
