@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="http://TargetNamespace.com/SewerAIProjects_putVideosMACP_request"
+           targetNamespace="http://TargetNamespace.com/SewerAIProjects_putVideosMACP_request"
+           elementFormDefault="qualified"
+           attributeFormDefault="unqualified">
+
+    <!-- Root -->
+    <xs:element name="VideosMACPRequest" type="VideosMACPRequestType"/>
+
+    <!-- Request -->
+    <xs:complexType name="VideosMACPRequestType">
+        <xs:sequence>
+            <xs:element name="items" type="ItemType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Item -->
+    <xs:complexType name="ItemType">
+        <xs:sequence>
+            <xs:element name="project_sid" type="xs:string"/>
+            <xs:element name="header" type="HeaderType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Header -->
+  <xs:complexType name="HeaderType">
+    <xs:sequence>
+      <!-- Required -->
+      <xs:element name="InspectionID" type="xs:string"/>
+      <xs:element name="Inspection_Type" type="xs:string" minOccurs="0"/>
+      <xs:element name="Pip_Type" type="xs:string" minOccurs="0"/>
+      <xs:element name="Surveyed_By" type="xs:string" minOccurs="0"/>
+      <xs:element name="Certificate_Number" type="xs:string" minOccurs="0"/>
+      <xs:element name="Inspection_Status" type="xs:string" minOccurs="0"/>
+      <xs:element name="Upstream_MH" type="xs:string" minOccurs="0"/>
+      <xs:element name="Downstream_MH" type="xs:string" minOccurs="0"/>
+      <xs:element name="Pipe_Segment_Reference" type="xs:string" minOccurs="0"/>
+      <xs:element name="Lateral_Segment_Reference" type="xs:string" minOccurs="0"/>
+      <xs:element name="Access_Point" type="xs:string" minOccurs="0"/>
+      <xs:element name="Manhole_Number" type="xs:string" minOccurs="0"/>
+      <xs:element name="Pipe_Use" type="xs:string" minOccurs="0"/>
+      <xs:element name="Cover_Shape" type="xs:string" minOccurs="0"/>
+      <xs:element name="Additional_Info" type="xs:string" minOccurs="0"/>
+      <xs:element name="Facility_Type" type="xs:decimal" minOccurs="0"/>
+      <xs:element name="Facility_ID" type="xs:string" minOccurs="0"/>
+      <xs:element name="FacilityOI" type="xs:decimal" minOccurs="0"/>
+      <xs:element name="Shape" type="xs:string" minOccurs="0"/>
+      <xs:element name="Access_Type" type="xs:string" minOccurs="0"/>
+      <xs:element name="MH_Use" type="xs:string" minOccurs="0"/>
+      <xs:element name="Material" type="xs:string" minOccurs="0"/>
+      <xs:element name="Wall_Material" type="xs:string" minOccurs="0"/>
+      <xs:element name="Bench_Material" type="xs:string" minOccurs="0"/>
+      <xs:element name="Channel_Material" type="xs:string" minOccurs="0"/>
+      <xs:element name="Wall_BySize" type="xs:decimal" minOccurs="0"/>
+      <xs:element name="Wall_Depth" type="xs:decimal" minOccurs="0"/>
+      <xs:element name="Elevation" type="xs:decimal" minOccurs="0"/>
+      <xs:element name="Frame_Material" type="xs:string" minOccurs="0"/>
+      <xs:element name="Height" type="xs:decimal" minOccurs="0"/>
+      <xs:element name="Up_Elevation" type="xs:decimal" minOccurs="0"/>
+      <xs:element name="Up_Grade_To_Invert" type="xs:decimal" minOccurs="0"/>
+      <xs:element name="Down_Elevation" type="xs:decimal" minOccurs="0"/>
+      <xs:element name="Down_Grade_To_Invert" type="xs:decimal" minOccurs="0"/>
+      <xs:element name="Street" type="xs:string" minOccurs="0"/>
+      <xs:element name="City" type="xs:string" minOccurs="0"/>
+      <xs:element name="Total_Length" type="xs:decimal" minOccurs="0"/>
+      <xs:element name="Year_Constructed" type="xs:decimal" minOccurs="0"/>
+      <xs:element name="Size" type="xs:string" minOccurs="0"/>
+      <xs:element name="Drainage_Area" type="xs:string" minOccurs="0"/>
+      <xs:element name="Feed_Status" type="xs:string" minOccurs="0"/>
+      <xs:element name="Workorder" type="xs:string" minOccurs="0"/>
+      <xs:element name="Project" type="xs:string" minOccurs="0"/>
+      <xs:element name="PO_Number" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
