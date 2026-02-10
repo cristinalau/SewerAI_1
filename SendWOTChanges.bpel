@@ -848,6 +848,7 @@ try {
       <vp:City/>
       <vp:Size/>
       <vp:Drainage_Area/>
+      <vp:Total_Length/>
       <vp:Feed_Status/>
       <vp:Workorder/>
       <vp:Project/>
