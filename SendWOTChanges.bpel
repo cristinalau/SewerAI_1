@@ -817,32 +817,56 @@ try {
                                     <assign xmlns:bpelx="http://schemas.oracle.com/bpel/extension" name="BuildPACPRequest" bpelx:insertMissingToData="yes" bpelx:ignoreMissingFromData="yes">
                                       <copy>
                                         <from><literal xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"><vp:VideosPACPRequest xmlns:vp="http://TargetNamespace.com/SewerAIProjects_putVideosPACP_request">
-                                            <vp:items>
-                                              <vp:project_sid/>
-                                              <vp:header>
-                                                <vp:InspectionID/>
-                                                <vp:Surveyed_By/>
-                                                <vp:Certificate_Number/>
-                                                <vp:Inspection_Status/>
-                                                <vp:Additional_Info/>
-                                                <vp:Pipe_Segment_Reference/>
-                                                <vp:Total_Length/>
-                                                <vp:Year_Constructed/>
-                                                <vp:Pipe_Use/>
-                                                <vp:Downstream_MH/>
-                                                <vp:Upstream_MH/>
-                                                <vp:Shape/>
-                                                <vp:Drainage_Area/>
-                                                <vp:Street/>
-                                                <vp:City/>
-                                                <vp:Height/>
-                                                <vp:Up_Elevation/>
-                                                <vp:Up_Grade_to_Invert/>
-                                                <vp:Down_Elevation/>
-                                                <vp:Down_Grade_to_Invert/>
-                                              </vp:header>
-                                            </vp:items>
-                                          </vp:VideosPACPRequest></literal></from>
+  <vp:items>
+    <vp:project_sid/>
+    <vp:header>
+      <vp:InspectionID/>
+      <vp:Inspection_Type/>
+      <vp:Pip_Type/>
+      <vp:Surveyed_By/>
+      <vp:Certificate_Number/>
+      <vp:Material/>
+      <vp:Inspection_Status/>
+      <vp:Upstream_MH/>
+      <vp:Downstream_MH/>
+      <vp:Pipe_Segment_Reference/>
+      <vp:Lateral_Segment_Reference/>
+      <vp:Access_Point/>
+      <vp:Manhole_Number/>
+      <vp:Pipe_Use/>
+      <vp:Cover_Shape/>
+      <vp:Additional_Info/>
+      <vp:Facility_Type/>
+      <vp:Facility_ID/>
+      <vp:FacilityOI/>
+      <vp:Shape/>
+      <vp:Access_Type/>
+      <vp:MH_Use/>
+      <vp:Wall_Material/>
+      <vp:Bench_Material/>
+      <vp:Channel_Material/>
+      <vp:Wall_BySize/>
+      <vp:Wall_Depth/>
+      <vp:Elevation/>
+      <vp:Frame_Material/>
+      <vp:Height/>
+      <vp:Up_Elevation/>
+      <vp:Up_Grade_To_Invert/>
+      <vp:Down_Elevation/>
+      <vp:Down_Grade_To_Invert/>
+      <vp:Street/>
+      <vp:City/>
+      <vp:Total_Length/>
+      <vp:Year_Constructed/>
+      <vp:Size/>
+      <vp:Drainage_Area/>
+      <vp:Feed_Status/>
+      <vp:Workorder/>
+      <vp:Project/>
+      <vp:PO_Number/>
+    </vp:header>
+  </vp:items>
+</vp:VideosPACPRequest></literal></from>
                                         <to>$putVideosPACP_In.request</to>
                                       </copy>
                                       <copy>
