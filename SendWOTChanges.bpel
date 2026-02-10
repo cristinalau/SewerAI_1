@@ -701,23 +701,49 @@ try {
                                             <vm:project_sid/>
                                             <vm:header>
                                               <vm:InspectionID/>
+                                              <vm:Inspection_Type/>
+                                              <vm:Pip_Type/>
                                               <vm:Surveyed_By/>
                                               <vm:Certificate_Number/>
                                               <vm:Inspection_Status/>
-                                              <vm:Additional_Info/>
+                                              <vm:Upstream_MH/>
+                                              <vm:Downstream_MH/>
+                                              <vm:Pipe_Segment_Reference/>
+                                              <vm:Lateral_Segment_Reference/>
+                                              <vm:Access_Point/>
                                               <vm:Manhole_Number/>
+                                              <vm:Pipe_Use/>
+                                              <vm:Cover_Shape/>
+                                              <vm:Additional_Info/>
+                                              <vm:Facility_Type/>
+                                              <vm:Facility_ID/>
+                                              <vm:FacilityOI/>
+                                              <vm:Shape/>
                                               <vm:Access_Type/>
                                               <vm:MH_Use/>
-                                              <vm:Drainage_Area/>
-                                              <vm:City/>
-                                              <vm:Street/>
+                                              <vm:Material/>
                                               <vm:Wall_Material/>
                                               <vm:Bench_Material/>
                                               <vm:Channel_Material/>
-                                              <vm:Cover_Shape/>
                                               <vm:Wall_BySize/>
                                               <vm:Wall_Depth/>
                                               <vm:Elevation/>
+                                              <vm:Frame_Material/>
+                                              <vm:Height/>
+                                              <vm:Up_Elevation/>
+                                              <vm:Up_Grade_To_Invert/>
+                                              <vm:Down_Elevation/>
+                                              <vm:Down_Grade_To_Invert/>
+                                              <vm:Street/>
+                                              <vm:City/>
+                                              <vm:Total_Length/>
+                                              <vm:Year_Constructed/>
+                                              <vm:Size/>
+                                              <vm:Drainage_Area/>
+                                              <vm:Feed_Status/>
+                                              <vm:Workorder/>
+                                              <vm:Project/>
+                                              <vm:PO_Number/>
                                             </vm:header>
                                           </vm:items>
                                         </vm:VideosMACPRequest></literal></from>
@@ -791,7 +817,123 @@ try {
                                         <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:elevation</from>
                                         <to expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">$putVideosMACP_In.request/vm:items/vm:header/vm:Elevation</to>
                                       </copy>
-                                    </assign>
+                                                                          <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:inspectionType</from>
+                                        <to>$putVideosMACP_In.request/vm:items/vm:header/vm:Inspection_Type</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:pipType</from>
+                                        <to>$putVideosMACP_In.request/vm:items/vm:header/vm:Pip_Type</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:surveyedBy</from>
+                                        <to>$putVideosMACP_In.request/vm:items/vm:header/vm:Surveyed_By</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:certificateNumber</from>
+                                        <to>$putVideosMACP_In.request/vm:items/vm:header/vm:Certificate_Number</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:inspectionStatus</from>
+                                        <to>$putVideosMACP_In.request/vm:items/vm:header/vm:Inspection_Status</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:upstreamMh</from>
+                                        <to>$putVideosMACP_In.request/vm:items/vm:header/vm:Upstream_MH</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:downstreamMh</from>
+                                        <to>$putVideosMACP_In.request/vm:items/vm:header/vm:Downstream_MH</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:pipeSegmentReference</from>
+                                        <to>$putVideosMACP_In.request/vm:items/vm:header/vm:Pipe_Segment_Reference</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:lateralSegmentReference</from>
+                                        <to>$putVideosMACP_In.request/vm:items/vm:header/vm:Lateral_Segment_Reference</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:accessPoint</from>
+                                        <to>$putVideosMACP_In.request/vm:items/vm:header/vm:Access_Point</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:pipeUse</from>
+                                        <to>$putVideosMACP_In.request/vm:items/vm:header/vm:Pipe_Use</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:facilityType</from>
+                                        <to>$putVideosMACP_In.request/vm:items/vm:header/vm:Facility_Type</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:facilityId</from>
+                                        <to>$putVideosMACP_In.request/vm:items/vm:header/vm:Facility_ID</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:facilityoi</from>
+                                        <to>$putVideosMACP_In.request/vm:items/vm:header/vm:FacilityOI</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:shape</from>
+                                        <to>$putVideosMACP_In.request/vm:items/vm:header/vm:Shape</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:material</from>
+                                        <to>$putVideosMACP_In.request/vm:items/vm:header/vm:Material</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:frameMaterial</from>
+                                        <to>$putVideosMACP_In.request/vm:items/vm:header/vm:Frame_Material</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:height</from>
+                                        <to>$putVideosMACP_In.request/vm:items/vm:header/vm:Height</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:upElevation</from>
+                                        <to>$putVideosMACP_In.request/vm:items/vm:header/vm:Up_Elevation</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:upGradeToInvert</from>
+                                        <to>$putVideosMACP_In.request/vm:items/vm:header/vm:Up_Grade_To_Invert</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:downElevation</from>
+                                        <to>$putVideosMACP_In.request/vm:items/vm:header/vm:Down_Elevation</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:downGradeToInvert</from>
+                                        <to>$putVideosMACP_In.request/vm:items/vm:header/vm:Down_Grade_To_Invert</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:totalLength</from>
+                                        <to>$putVideosMACP_In.request/vm:items/vm:header/vm:Total_Length</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:yearConstructed</from>
+                                        <to>$putVideosMACP_In.request/vm:items/vm:header/vm:Year_Constructed</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:size</from>
+                                        <to>$putVideosMACP_In.request/vm:items/vm:header/vm:Size</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:feedStatus</from>
+                                        <to>$putVideosMACP_In.request/vm:items/vm:header/vm:Feed_Status</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:workorder</from>
+                                        <to>$putVideosMACP_In.request/vm:items/vm:header/vm:Workorder</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:project</from>
+                                        <to>$putVideosMACP_In.request/vm:items/vm:header/vm:Project</to>
+                                      </copy>
+                                      <copy>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:poNumber</from>
+                                        <to>$putVideosMACP_In.request/vm:items/vm:header/vm:PO_Number</to>
+                                      </copy>
+</assign>
                                     <assign name="CleanMACPRequest">
                                       <copy>
                                         <from>ora:processXSLT('xsl/StripNilElements.xsl', $putVideosMACP_In.request)</from>
@@ -817,45 +959,45 @@ try {
                                     <assign xmlns:bpelx="http://schemas.oracle.com/bpel/extension" name="BuildPACPRequest" bpelx:insertMissingToData="yes" bpelx:ignoreMissingFromData="yes">
                                       <copy>
                                         <from><literal xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"><vp:VideosPACPRequest xmlns:vp="http://TargetNamespace.com/SewerAIProjects_putVideosPACP_request">
-  <vp:items>
-    <vp:project_sid/>
-    <vp:header>
-      <vp:InspectionID/>
-      <vp:Inspection_Type/>
-      <vp:Pip_Type/>
-      <vp:Surveyed_By/>
-      <vp:Certificate_Number/>
-      <vp:Material/>
-      <vp:Inspection_Status/>
-      <vp:Upstream_MH/>
-      <vp:Downstream_MH/>
-      <vp:Pipe_Segment_Reference/>
-      <vp:Lateral_Segment_Reference/>
-      <vp:Access_Point/>
-      <vp:Manhole_Number/>
-      <vp:Pipe_Use/>
-      <vp:Cover_Shape/>
-      <vp:Additional_Info/>
-      <vp:Facility_ID/>
-      <vp:Shape/>
-      <vp:Access_Type/>
-      <vp:MH_Use/>
-      <vp:Wall_Material/>
-      <vp:Bench_Material/>
-      <vp:Channel_Material/>
-      <vp:Frame_Material/>
-      <vp:Street/>
-      <vp:City/>
-      <vp:Size/>
-      <vp:Drainage_Area/>
-      <vp:Total_Length/>
-      <vp:Feed_Status/>
-      <vp:Workorder/>
-      <vp:Project/>
-      <vp:PO_Number/>
-    </vp:header>
-  </vp:items>
-</vp:VideosPACPRequest></literal></from>
+                                          <vp:items>
+                                            <vp:project_sid/>
+                                            <vp:header>
+                                              <vp:InspectionID/>
+                                              <vp:Inspection_Type/>
+                                              <vp:Pip_Type/>
+                                              <vp:Surveyed_By/>
+                                              <vp:Certificate_Number/>
+                                              <vp:Material/>
+                                              <vp:Inspection_Status/>
+                                              <vp:Upstream_MH/>
+                                              <vp:Downstream_MH/>
+                                              <vp:Pipe_Segment_Reference/>
+                                              <vp:Lateral_Segment_Reference/>
+                                              <vp:Access_Point/>
+                                              <vp:Manhole_Number/>
+                                              <vp:Pipe_Use/>
+                                              <vp:Cover_Shape/>
+                                              <vp:Additional_Info/>
+                                              <vp:Facility_ID/>
+                                              <vp:Shape/>
+                                              <vp:Access_Type/>
+                                              <vp:MH_Use/>
+                                              <vp:Wall_Material/>
+                                              <vp:Bench_Material/>
+                                              <vp:Channel_Material/>
+                                              <vp:Frame_Material/>
+                                              <vp:Street/>
+                                              <vp:City/>
+                                              <vp:Size/>
+                                              <vp:Drainage_Area/>
+                                              <vp:Total_Length/>
+                                              <vp:Feed_Status/>
+                                              <vp:Workorder/>
+                                              <vp:Project/>
+                                              <vp:PO_Number/>
+                                            </vp:header>
+                                          </vp:items>
+                                        </vp:VideosPACPRequest></literal></from>
                                         <to>$putVideosPACP_In.request</to>
                                       </copy>
                                       <copy>
