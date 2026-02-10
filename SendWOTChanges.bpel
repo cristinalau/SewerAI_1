@@ -643,7 +643,7 @@ try {
                                       <to>$putVideosLACP_In.request/vl:items/vl:header/vl:Lateral_Segment_Reference</to>
                                     </copy>
                                     <copy>
-                                      <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:totalLength</from>
+                                      <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:totalLength[normalize-space(.)!='']</from>
                                       <to>$putVideosLACP_In.request/vl:items/vl:header/vl:Total_Length</to>
                                     </copy>
                                     <copy>
@@ -836,28 +836,16 @@ try {
       <vp:Pipe_Use/>
       <vp:Cover_Shape/>
       <vp:Additional_Info/>
-      <vp:Facility_Type/>
       <vp:Facility_ID/>
-      <vp:FacilityOI/>
       <vp:Shape/>
       <vp:Access_Type/>
       <vp:MH_Use/>
       <vp:Wall_Material/>
       <vp:Bench_Material/>
       <vp:Channel_Material/>
-      <vp:Wall_BySize/>
-      <vp:Wall_Depth/>
-      <vp:Elevation/>
       <vp:Frame_Material/>
-      <vp:Height/>
-      <vp:Up_Elevation/>
-      <vp:Up_Grade_To_Invert/>
-      <vp:Down_Elevation/>
-      <vp:Down_Grade_To_Invert/>
       <vp:Street/>
       <vp:City/>
-      <vp:Total_Length/>
-      <vp:Year_Constructed/>
       <vp:Size/>
       <vp:Drainage_Area/>
       <vp:Feed_Status/>
@@ -892,11 +880,11 @@ try {
                                         <to>$putVideosPACP_In.request/vp:items/vp:header/vp:Pipe_Segment_Reference</to>
                                       </copy>
                                       <copy>
-                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:totalLength</from>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:totalLength[normalize-space(.)!='']</from>
                                         <to expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">$putVideosPACP_In.request/vp:items/vp:header/vp:Total_Length</to>
                                       </copy>
                                       <copy>
-                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:yearConstructed</from>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:yearConstructed[normalize-space(.)!='']</from>
                                         <to expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">$putVideosPACP_In.request/vp:items/vp:header/vp:Year_Constructed</to>
                                       </copy>
                                       <copy>
@@ -938,23 +926,23 @@ try {
                                         <to expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">$putVideosPACP_In.request/vp:items/vp:header/vp:City</to>
                                       </copy>
                                       <copy>
-                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:height</from>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:height[normalize-space(.)!='']</from>
                                         <to expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">$putVideosPACP_In.request/vp:items/vp:header/vp:Height</to>
                                       </copy>
                                       <copy>
-                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:upElevation</from>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:upElevation[normalize-space(.)!='']</from>
                                         <to expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">$putVideosPACP_In.request/vp:items/vp:header/vp:Up_Elevation</to>
                                       </copy>
                                       <copy>
-                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:upGradeToInvert</from>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:upGradeToInvert[normalize-space(.)!='']</from>
                                         <to expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">$putVideosPACP_In.request/vp:items/vp:header/vp:Up_Grade_To_Invert</to>
                                       </copy>
                                       <copy>
-                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:downElevation</from>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:downElevation[normalize-space(.)!='']</from>
                                         <to expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">$putVideosPACP_In.request/vp:items/vp:header/vp:Down_Elevation</to>
                                       </copy>
                                       <copy>
-                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:downGradeToInvert</from>
+                                        <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:downGradeToInvert[normalize-space(.)!='']</from>
                                         <to expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">$putVideosPACP_In.request/vp:items/vp:header/vp:Down_Grade_To_Invert</to>
                                       </copy>
                                     </assign>
