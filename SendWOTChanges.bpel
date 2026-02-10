@@ -936,7 +936,7 @@ try {
                                         <to>$putVideosPACP_In.request/vp:items/vp:header/vp:InspectionID</to>
                                       </copy>
                                       <copy>
-                                        <from expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">string($InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:additionalInfo)</from>
+                                        <from expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">string($InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:additionalInfo</from>
                                         <to expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">$putVideosPACP_In.request/vp:items/vp:header/vp:Additional_Info</to>
                                       </copy>
                                       <copy>
