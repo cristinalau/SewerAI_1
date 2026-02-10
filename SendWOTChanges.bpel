@@ -933,7 +933,8 @@ try {
                                         <from>$InvokeReadCRInspect_ReadCRInspectSelect_OutputVariable.VCrInspectToSendCollection/topCRI:VCrInspectToSend[normalize-space(topCRI:projectSid)=normalize-space($vProjectSid)][$i]/topCRI:poNumber</from>
                                         <to>$putVideosMACP_In.request/vm:items/vm:header/vm:PO_Number</to>
                                       </copy>
-</assign>
+                                    </assign>
+                                    
                                     <assign name="CleanMACPRequest">
                                       <copy>
                                         <from>ora:processXSLT('xsl/StripNilElements.xsl', $putVideosMACP_In.request)</from>
@@ -986,11 +987,17 @@ try {
                                               <vp:Bench_Material/>
                                               <vp:Channel_Material/>
                                               <vp:Frame_Material/>
+                                              <vp:Height/>
+                                              <vp:Up_Elevation/>
+                                              <vp:Up_Grade_To_Invert/>
+                                              <vp:Down_Elevation/>
+                                              <vp:Down_Grade_To_Invert/>
                                               <vp:Street/>
                                               <vp:City/>
                                               <vp:Size/>
                                               <vp:Drainage_Area/>
                                               <vp:Total_Length/>
+                                              <vp:Year_Constructed/>
                                               <vp:Feed_Status/>
                                               <vp:Workorder/>
                                               <vp:Project/>
