@@ -1102,7 +1102,7 @@ try {
                                         <to>$putVideosPACP_In.request</to>
                                       </copy>
                                     </assign>
-                                    <invoke xmlns:bpelx="http://schemas.oracle.com/bpel/extension" name="InvokePutVideosPACP" partnerLink="SewerAIVideos" portType="vid:SewerAIVideos_ptt" operation="putVideosLACP" inputVariable="putVideosPACP_In" bpelx:invokeAsDetail="yes">
+                                    <invoke xmlns:bpelx="http://schemas.oracle.com/bpel/extension" name="InvokePutVideosPACP" partnerLink="SewerAIVideos" portType="vid:SewerAIVideos_ptt" operation="putVideosPACP" inputVariable="putVideosPACP_In" bpelx:invokeAsDetail="yes">
                                       <bpelx:toProperties>
                                         <bpelx:toProperty name="rest.binding.http.Authorization" variable="vAuth"/>
                                         <bpelx:toProperty name="rest.binding.http.Content-Type" variable="vCT"/>
